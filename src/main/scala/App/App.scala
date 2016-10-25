@@ -125,8 +125,12 @@ object App {
       */
     def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
       val seed: ResultadoPelea = (this, guerrero)
-      planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) => res._1.pelearRound(m)(res._2) }
+      planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
+        if(res._1.ki <= 0 || res._2.ki <= 0) return res
+        res._1.pelearRound(m)(res._2)
+      }
     }
+
   }
 
   case class Humano() extends Guerrero
