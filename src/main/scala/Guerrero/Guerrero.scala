@@ -41,6 +41,7 @@ trait Guerrero {
   def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Movimiento =
     movimientos.map{criterio.simular(this, guerrero)}.maxBy(_._2)._1
   //FIXME: preguntar dónde poner la exception de ningún movimiento cumple. Por ejemplo 'cualquier cosa que no deje al ejecutante en 0'
+  //OPTION???
 
   /**
   Cuando un guerrero pelea un round, realiza un movimiento (previamente elegido) contra el oponente.
@@ -107,7 +108,7 @@ trait Guerrero {
 
 trait Fusionable
 
-case class Humano(nombre: String, inventario: List[Item], movimientos: List[Movimiento], ki: Int, kiMax: Int) extends Guerrero with Fusionable with Ki {}
+case class Humano(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable with Ki {}
 case class Saiyajin(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false) extends Guerrero with Fusionable with Ki {
   //def intentarTransformarse() = {
     // if (kiMax / 2 <= ki) throw new Exception("El saiyajin no tiene el ki suficiente para transformarse.")

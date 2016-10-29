@@ -30,7 +30,7 @@ trait Criterio {
 case object MayorDanio extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento): (Movimiento, Int) = {
     val (_, ataca2) = movimiento.aplicar(ejecutante, atacado)
-    (movimiento, atacado.ki - ataca2.ki)
+    (movimiento, atacado.currentEnergy() - ataca2.currentEnergy())
   }
 
 }
@@ -39,7 +39,7 @@ case object MayorDanio extends Criterio {
 case object MenorDanio extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento): (Movimiento, Int) = {
     val (_, ataca2) = movimiento.aplicar(ejecutante, atacado)
-    (movimiento, ataca2.ki - atacado.ki)
+    (movimiento, ataca2.currentEnergy() - atacado.currentEnergy())
   }
 }
 
@@ -47,7 +47,7 @@ case object MenorDanio extends Criterio {
 case object MenorDesventaja extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento): (Movimiento, Int) = {
     val (ejecuta2, ataca2) = movimiento.aplicar(ejecutante, atacado)
-    (movimiento, - math.abs(ejecuta2.ki - ataca2.ki))
+    (movimiento, - math.abs(ejecuta2.currentEnergy() - ataca2.currentEnergy()))
   }
 }
 
@@ -63,6 +63,6 @@ case object GastarMenosItems extends Criterio {
 case object QueNoMeMate extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento): (Movimiento, Int) = {
     val (ejecuta2, _) = movimiento.aplicar(ejecutante, atacado)
-    (movimiento, ejecuta2.ki)
+    (movimiento, ejecuta2.currentEnergy())
   }
 }
