@@ -4,6 +4,25 @@ import Item._
 import Movimiento.Movimiento
 import Criterio.{Criterio, MenorDesventaja}
 
+trait EnergiaInterna {
+  def currentEnergy: Int
+  def maxEnergy: Int
+}
+
+trait Ki extends EnergiaInterna {
+  val ki: Int
+  val kiMax: Int
+  override def currentEnergy: Int = ki
+  override def maxEnergy: Int = kiMax
+}
+
+trait Bateria extends EnergiaInterna {
+  val bateria: Int
+  val bateriaMax: Int
+  override def currentEnergy: Int = bateria
+  override def maxEnergy: Int = bateriaMax
+}
+
 trait Guerrero {
 
   type PlanDeAtaque = Seq[Movimiento]
@@ -12,6 +31,9 @@ trait Guerrero {
   val nombre: String
   val inventario: List[Item]
   val movimientos: List[Movimiento]
+
+  def currentEnergy(): Int
+  def maxEnergy(): Int
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea =
     movimiento.aplicar(this, guerrero)
@@ -71,22 +93,22 @@ trait Guerrero {
 
       BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
-  //def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
-    // si el bonus era para el punto 3, cambiar el fold por una recursion con pattern matching
-    // para sacar ese return de mierda
-    //val seed: ResultadoPelea = (this, guerrero)
-    //planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
-     // if(res._1.ki <= 0 || res._2.ki <= 0) return res
-      //res._1.pelearRound(m)(res._2)
-    //}
-  //}
+  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
+//     si el bonus era para el punto 3, cambiar el fold por una recursion con pattern matching
+//     para sacar ese return de mierda
+    val seed: ResultadoPelea = (this, guerrero)
+    planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
+      if(res._1.currentEnergy() <= 0 || res._2.currentEnergy() <= 0) return res
+      res._1.pelearRound(m)(res._2)
+    }
+  }
 
 }
 
 trait Fusionable
 
-case class Humano(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable {}
-case class Saiyajin(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false) extends Guerrero with Fusionable {
+case class Humano(nombre: String, inventario: List[Item], movimientos: List[Movimiento], ki: Int, kiMax: Int) extends Guerrero with Fusionable with Ki {}
+case class Saiyajin(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false) extends Guerrero with Fusionable with Ki {
   //def intentarTransformarse() = {
     // if (kiMax / 2 <= ki) throw new Exception("El saiyajin no tiene el ki suficiente para transformarse.")
     //else if (estadoMono) throw new Exception("El saiyajin está convertido en mono.")
@@ -100,7 +122,8 @@ case class Saiyajin(nombre: String, inventario: List[Item], movimientos: List[Mo
 //  }
 }
 
-case class Androide(nombre: String, inventario: List[Item], movimientos: List[Movimiento], bateriaMax: Int, bateria: Int) extends Guerrero
-case class Namekusein(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable
-case class Monstruo(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, formaDeDigerir: (Guerrero => Guerrero)) extends Guerrero
-case class Fusionado(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero
+case class Androide(nombre: String, inventario: List[Item], movimientos: List[Movimiento], bateriaMax: Int, bateria: Int) extends Guerrero with Bateria {
+}
+case class Namekusein(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable with Ki
+case class Monstruo(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, formaDeDigerir: (Guerrero => Guerrero)) extends Guerrero with Ki
+case class Fusionado(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Ki
