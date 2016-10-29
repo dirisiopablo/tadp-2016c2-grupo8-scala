@@ -17,10 +17,10 @@ case class MuchosGolpes() extends AtaqueFisico {
     (ejecutante, atacado) match {
       case (Androide(_, _, _, _, _), Humano(nombre, inventario, movimientos, kiMax, ki)) =>
         (ejecutante, Humano(nombre, inventario, movimientos, kiMax, ki - 10))
-      case (a, b) =>
-//        if (a.currentEnergy() < b.currentEnergy()) (a, b) //TODO: devolver al guerrero con ki -= 20
-//        else (a, b) //TODO: devolver al atacado con ki -= 20
-
+      case _ if ejecutante.currentEnergy < atacado.currentEnergy =>
+         (ejecutante copyWithEnergy (ejecutante.currentEnergy - 20), atacado)
+      case _ if ejecutante.currentEnergy > atacado.currentEnergy =>
+         (ejecutante, atacado copyWithEnergy (atacado.currentEnergy - 20))
     }
   }
 }
@@ -28,9 +28,12 @@ case class MuchosGolpes() extends AtaqueFisico {
 case class Explotar() extends AtaqueFisico {
   def aplicar(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
-      case (Androide(nombre, inventario, movimientos, bateriaMax, bateria), b) => //TODO: androide con bateria = 0, b con ki/bat - bateria*3
-      case (Namekusein(nombre, inventario, movimientos, kiMax, ki), b) => //TODO: namek ki=1 el otro con ki - namek ki * 2
-      case _ => //TODO: ejecutante ki = 0, atacante ki - ej.ki *2
+      case (Androide(nombre, inventario, movimientos, bateriaMax, bateria), b) =>
+        (ejecutante copyWithEnergy 0, b copyWithEnergy (b.currentEnergy - ejecutante.currentEnergy * 3))
+      case (Namekusein(nombre, inventario, movimientos, kiMax, ki), b) =>
+        (ejecutante copyWithEnergy 1, b copyWithEnergy (b.currentEnergy - ejecutante.currentEnergy * 2))
+      case _ =>
+        (ejecutante copyWithEnergy 0, atacado copyWithEnergy (atacado.currentEnergy - ejecutante.currentEnergy * 2))
     }
   }
 }

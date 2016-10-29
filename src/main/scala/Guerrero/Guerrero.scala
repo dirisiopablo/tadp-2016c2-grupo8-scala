@@ -32,16 +32,17 @@ trait Guerrero {
   val inventario: List[Item]
   val movimientos: List[Movimiento]
 
-  def currentEnergy(): Int
-  def maxEnergy(): Int
+  def currentEnergy: Int
+  def maxEnergy: Int
+
+  def copyWithEnergy(energy: Int): Guerrero = ???
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea =
     movimiento.aplicar(this, guerrero)
 
   def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Movimiento =
     movimientos.map{criterio.simular(this, guerrero)}.maxBy(_._2)._1
-  //FIXME: preguntar dónde poner la exception de ningún movimiento cumple. Por ejemplo 'cualquier cosa que no deje al ejecutante en 0'
-  //OPTION???
+  //OPTION/TRY
 
   /**
   Cuando un guerrero pelea un round, realiza un movimiento (previamente elegido) contra el oponente.
@@ -99,7 +100,7 @@ trait Guerrero {
 //     para sacar ese return de mierda
     val seed: ResultadoPelea = (this, guerrero)
     planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
-      if(res._1.currentEnergy() <= 0 || res._2.currentEnergy() <= 0) return res
+      if(res._1.currentEnergy <= 0 || res._2.currentEnergy <= 0) return res
       res._1.pelearRound(m)(res._2)
     }
   }
@@ -110,17 +111,6 @@ trait Fusionable
 
 case class Humano(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable with Ki {}
 case class Saiyajin(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false) extends Guerrero with Fusionable with Ki {
-  //def intentarTransformarse() = {
-    // if (kiMax / 2 <= ki) throw new Exception("El saiyajin no tiene el ki suficiente para transformarse.")
-    //else if (estadoMono) throw new Exception("El saiyajin está convertido en mono.")
-    //    else {
-  //  kiMax = kiMax * 5
-    //}
-  //}
-
-//  def convertirseEnMono() = {
-//    if (inventario.contains("foto luna") && cola)
-//  }
 }
 
 case class Androide(nombre: String, inventario: List[Item], movimientos: List[Movimiento], bateriaMax: Int, bateria: Int) extends Guerrero with Bateria {
