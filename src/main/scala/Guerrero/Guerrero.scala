@@ -9,18 +9,16 @@ trait Guerrero {
   type PlanDeAtaque = Seq[Movimiento]
   type ResultadoPelea = (Guerrero, Guerrero)
 
-  val nombre: String = ???
-  val inventario: List[Item] = ???
-  val movimientos: List[Movimiento] = ???
-  val kiMax: Int = ???
-  val ki: Int = ???
+  val nombre: String
+  val inventario: List[Item]
+  val movimientos: List[Movimiento]
 
-  def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea = ???
-  // movimiento(this) -- overrideando el apply
-  // si necesita un target, que sea movimiento(this)(target)
+  def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea =
+    movimiento.aplicar(this, guerrero)
 
   def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Movimiento =
     movimientos.map{criterio.simular(this, guerrero)}.maxBy(_._2)._1
+  //FIXME: preguntar dónde poner la exception de ningún movimiento cumple. Por ejemplo 'cualquier cosa que no deje al ejecutante en 0'
 
   /**
   Cuando un guerrero pelea un round, realiza un movimiento (previamente elegido) contra el oponente.
@@ -73,23 +71,36 @@ trait Guerrero {
 
       BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
-  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
+  //def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
     // si el bonus era para el punto 3, cambiar el fold por una recursion con pattern matching
     // para sacar ese return de mierda
-    val seed: ResultadoPelea = (this, guerrero)
-    planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
-      if(res._1.ki <= 0 || res._2.ki <= 0) return res
-      res._1.pelearRound(m)(res._2)
-    }
-  }
+    //val seed: ResultadoPelea = (this, guerrero)
+    //planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
+     // if(res._1.ki <= 0 || res._2.ki <= 0) return res
+      //res._1.pelearRound(m)(res._2)
+    //}
+  //}
 
 }
 
 trait Fusionable
 
-case class Humano() extends Guerrero with Fusionable
-case class Saiyajin(cola: Boolean) extends Guerrero with Fusionable
-case class Androide(bateria: Int) extends Guerrero
-case class Namekusein() extends Guerrero with Fusionable
-case class Monstruo(formaDeDigerir: (Guerrero => Guerrero)) extends Guerrero
-case class Fusionado() extends Guerrero
+case class Humano(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable {}
+case class Saiyajin(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false) extends Guerrero with Fusionable {
+  //def intentarTransformarse() = {
+    // if (kiMax / 2 <= ki) throw new Exception("El saiyajin no tiene el ki suficiente para transformarse.")
+    //else if (estadoMono) throw new Exception("El saiyajin está convertido en mono.")
+    //    else {
+  //  kiMax = kiMax * 5
+    //}
+  //}
+
+//  def convertirseEnMono() = {
+//    if (inventario.contains("foto luna") && cola)
+//  }
+}
+
+case class Androide(nombre: String, inventario: List[Item], movimientos: List[Movimiento], bateriaMax: Int, bateria: Int) extends Guerrero
+case class Namekusein(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero with Fusionable
+case class Monstruo(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int, formaDeDigerir: (Guerrero => Guerrero)) extends Guerrero
+case class Fusionado(nombre: String, inventario: List[Item], movimientos: List[Movimiento], kiMax: Int, ki: Int) extends Guerrero
