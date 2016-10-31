@@ -8,32 +8,34 @@ trait Movimiento {
 }
 
 trait Ataque extends Movimiento
+
 trait AtaqueFisico extends Ataque
+
 trait AtaqueEnergia extends Ataque
 
-case class MuchosGolpes() extends AtaqueFisico {
+case object MuchosGolpes extends AtaqueFisico {
 
   def aplicar(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
-      case (Androide(_, _, _, _, _), Humano(nombre, inventario, movimientos, kiMax, ki)) =>
-        (ejecutante, Humano(nombre, inventario, movimientos, kiMax, ki - 10))
-      case _ if ejecutante.currentEnergy < atacado.currentEnergy =>
-         (ejecutante copyWithEnergy (ejecutante.currentEnergy - 20), atacado)
-      case _ if ejecutante.currentEnergy > atacado.currentEnergy =>
-         (ejecutante, atacado copyWithEnergy (atacado.currentEnergy - 20))
+      case (Androide(_), Humano(caracteristicas)) =>
+        (ejecutante, atacado copiarConEnergia (atacado.energia - 10))
+      case _ if ejecutante.energia < atacado.energia =>
+        (ejecutante copiarConEnergia (ejecutante.energia - 20), atacado)
+      case _ if ejecutante.energia > atacado.energia =>
+        (ejecutante, atacado copiarConEnergia (atacado.energia - 20))
     }
   }
 }
 
-case class Explotar() extends AtaqueFisico {
+case object Explotar extends AtaqueFisico {
   def aplicar(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
-      case (Androide(nombre, inventario, movimientos, bateriaMax, bateria), b) =>
-        (ejecutante copyWithEnergy 0, b copyWithEnergy (b.currentEnergy - ejecutante.currentEnergy * 3))
-      case (Namekusein(nombre, inventario, movimientos, kiMax, ki), b) =>
-        (ejecutante copyWithEnergy 1, b copyWithEnergy (b.currentEnergy - ejecutante.currentEnergy * 2))
+      case (Androide(caracteristicas), b) =>
+        (ejecutante copiarConEnergia 0, b copiarConEnergia (b.energia - ejecutante.energia * 3))
+      case (Namekusein(caracteristicas), b) =>
+        (ejecutante copiarConEnergia 1, b copiarConEnergia (b.energia - ejecutante.energia * 2))
       case _ =>
-        (ejecutante copyWithEnergy 0, atacado copyWithEnergy (atacado.currentEnergy - ejecutante.currentEnergy * 2))
+        (ejecutante copiarConEnergia 0, atacado copiarConEnergia (atacado.energia - ejecutante.energia * 2))
     }
   }
 }
