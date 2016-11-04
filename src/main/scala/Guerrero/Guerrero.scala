@@ -4,10 +4,12 @@ import Item._
 import Movimiento.Movimiento
 import Criterio.{Criterio, MenorDesventaja}
 
+import scala.None
+
 trait Guerrero {
 
   type PlanDeAtaque = Seq[Movimiento]
-  type ResultadoPelea = (Guerrero, Guerrero)
+//  type ResultadoPelea = (Guerrero, Guerrero)
 
   val caracteristicas: Caracteristicas
 
@@ -17,10 +19,16 @@ trait Guerrero {
 
   def copiarConEnergia(energia: Int): Guerrero
 
-  def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea = movimiento.aplicar(this, guerrero)
+  def atacar(guerrero: Guerrero, movimiento: Option[Movimiento]): Option[ResultadoPelea] = movimiento.map( _.aplicar(this, guerrero))
 
-  def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Movimiento =
-    movimientos.maxBy(criterio.simular(this, guerrero))
+  /**
+    * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
+    * y no debe ser considerado una respuesta válida.
+  */
+  def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Option[Movimiento] = {
+    if ((movimientos map criterio.simular(this, guerrero)).forall( _ <= 0 )) None // ¯\_(ツ)_/¯
+    else Some(movimientos.maxBy(criterio.simular(this, guerrero)))
+  }
 
   /**
     * Cuando un guerrero pelea un round, realiza un movimiento (previamente elegido) contra el oponente.
@@ -29,9 +37,9 @@ trait Guerrero {
     * (o al menos, con la menor desventaja) sobre los puntos de ki.
     * Al finalizar el round, el usuario debe poder tener acceso al nuevo estado del atacante y el defensor.
     */
-  def pelearRound(movimiento: Movimiento)(guerrero: Guerrero): ResultadoPelea = {
-    val (yo, elOtro) = this.atacar(guerrero, movimiento)
-    elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja))
+  def pelearRound(movimiento: Option[Movimiento])(guerrero: Guerrero): Option[ResultadoPelea] = {
+    val resultado = this.atacar(guerrero, movimiento)
+    resultado.flatMap(res => res.elOtro.atacar(res.yo, res.elOtro.movimentoMasEfectivoContra(res.yo)(MenorDesventaja)))
   }
 
   /**
@@ -44,8 +52,8 @@ trait Guerrero {
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
   def planDeAtaquecontra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
-
     type state = (ResultadoPelea, PlanDeAtaque)
+
     def nextState(s: state): state = {
       val yo = s._1._1
       val elOtro = s._1._2
@@ -89,7 +97,7 @@ trait Guerrero {
 
 trait Fusionable
 
-case class ResultadoPelea() {
+case class ResultadoPelea(yo: Guerrero, elOtro: Guerrero) {
   def map(f: Guerrero => Guerrero): ResultadoPelea = ???
   def filter(f: Guerrero => Boolean): ResultadoPelea = ???
   def flatMap(f: Guerrero => Guerrero): ResultadoPelea = ???

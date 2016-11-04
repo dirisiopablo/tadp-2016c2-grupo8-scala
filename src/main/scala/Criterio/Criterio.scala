@@ -14,8 +14,6 @@ import Movimiento.Movimiento
   * es decir, un criterio debe procesar el estado del ejecutante y el defensor luego de realizar el movimiento
   * y producir un número que represente qué tan “deseado” es dicho resultado.
   * Cuanto más grande sea el número, más favorecido será el movimiento analizado.
-  * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
-  * y no debe ser considerado una respuesta válida.
   **
   * Es importante tener en cuenta que el guerrero podría no disponer de ningún movimiento que satisfaga el criterio,
   * lo cual debe ser manejado de forma acorde.
