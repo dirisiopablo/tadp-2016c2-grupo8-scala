@@ -4,11 +4,11 @@ import Item._
 import Movimiento.Movimiento
 import Criterio.{Criterio, MenorDesventaja}
 
-import scala.None
+import scala.util.Try
 
 trait Guerrero {
 
-  type PlanDeAtaque = Seq[Movimiento]
+  type PlanDeAtaque = Seq[Option[Movimiento]]
 //  type ResultadoPelea = (Guerrero, Guerrero)
 
   val caracteristicas: Caracteristicas
@@ -19,7 +19,13 @@ trait Guerrero {
 
   def copiarConEnergia(energia: Int): Guerrero
 
-  def atacar(guerrero: Guerrero, movimiento: Option[Movimiento]): Option[ResultadoPelea] = movimiento.map( _.aplicar(this, guerrero))
+  def isAlive: Boolean = energia > 0
+
+  def atacar(guerrero: Guerrero, movimiento: Option[Movimiento]): Try[ResultadoPelea] = Try {
+    require(isAlive, "No podes atacar muerto titan")
+    require(guerrero.isAlive, "atacaste a un tomuer denunciado salu2")
+    movimiento.map{_.aplicar(this, guerrero)}
+  }
 
   /**
     * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
@@ -37,7 +43,7 @@ trait Guerrero {
     * (o al menos, con la menor desventaja) sobre los puntos de ki.
     * Al finalizar el round, el usuario debe poder tener acceso al nuevo estado del atacante y el defensor.
     */
-  def pelearRound(movimiento: Option[Movimiento])(guerrero: Guerrero): Option[ResultadoPelea] = {
+  def pelearRound(movimiento: Option[Movimiento], guerrero: Guerrero): Try[ResultadoPelea] = {
     val resultado = this.atacar(guerrero, movimiento)
     resultado.flatMap(res => res.elOtro.atacar(res.yo, res.elOtro.movimentoMasEfectivoContra(res.yo)(MenorDesventaja)))
   }
@@ -52,17 +58,24 @@ trait Guerrero {
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
   def planDeAtaquecontra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
-    type state = (ResultadoPelea, PlanDeAtaque)
+//    type state = (Option[ResultadoPelea], PlanDeAtaque)
+//
+//    def nextState(s: state): state = {
+//      val yo = s._1.yo
+//      val elOtro = s._1.elOtro
+//      val mov = yo.movimentoMasEfectivoContra(elOtro)(criterio)
+//      (yo.pelearRound(mov, elOtro), s._2 :+ mov)
+//    }
+//
+//    val seed = ((this, guerrero), Seq[Movimiento]())
+//    (1 to rounds).fold(seed) { (a, _) => nextState(a) }._2
 
-    def nextState(s: state): state = {
-      val yo = s._1._1
-      val elOtro = s._1._2
-      val mov = yo.movimentoMasEfectivoContra(elOtro)(criterio)
-      (yo.pelearRound(mov)(elOtro), s._2 :+ mov)
+    val primerMovimiento = this.movimentoMasEfectivoContra(guerrero)(criterio)
+    val primerResultado = p elearRound(primerMovimiento, guerrero)
+    (1 until  (rounds -1)).fold(primerResultado, Seq[Option[Movimiento]](primerMovimiento)) { (res, list) =>
+
     }
 
-    val seed = ((this, guerrero), Seq[Movimiento]())
-    (1 to rounds).foldLeft(seed) { (a, _) => nextState(a) }._2
   }
 
   /**
@@ -84,13 +97,7 @@ trait Guerrero {
     *
     */
   def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
-    //     si el bonus era para el punto 3, cambiar el fold por una recursion con pattern matching
-    //     para sacar ese return de mierda
-    val seed: ResultadoPelea = (this, guerrero)
-    planDeAtaque.foldLeft(seed) { (res: ResultadoPelea, m: Movimiento) =>
-      if (res._1.caracteristicas.energia <= 0 || res._2.caracteristicas.energia <= 0) return res
-      res._1.pelearRound(m)(res._2)
-    }
+    planDeAtaque.fold(ResultadoPelea(this, guerrero)) {(s: ResultadoPelea, m: Option[Movimiento]) => s.yo.pelearRound(m, s.elOtro)}
   }
 
 }
@@ -98,10 +105,10 @@ trait Guerrero {
 trait Fusionable
 
 case class ResultadoPelea(yo: Guerrero, elOtro: Guerrero) {
-  def map(f: Guerrero => Guerrero): ResultadoPelea = ???
-  def filter(f: Guerrero => Boolean): ResultadoPelea = ???
-  def flatMap(f: Guerrero => Guerrero): ResultadoPelea = ???
-  def fold = ???
+  def map(f: Guerrero => Guerrero): ResultadoPelea = ResultadoPelea(f(yo), f(elOtro))
+  def filter(f: Guerrero => Boolean): ResultadoPelea = if (f(yo) && f(elOtro)) this else throw new Exception("Falló el filtrado.")
+  def flatMap(f: Guerrero => Guerrero): ResultadoPelea = ResultadoPelea(f(yo), f(elOtro))
+  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = f(this)
 }
 
 case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: List[Movimiento], energiaMax: Int, energia: Int)
