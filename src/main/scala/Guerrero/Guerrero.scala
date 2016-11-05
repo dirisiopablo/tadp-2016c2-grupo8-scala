@@ -21,11 +21,7 @@ trait Guerrero {
 
   def isAlive: Boolean = energia > 0
 
-  def atacar(guerrero: Guerrero, movimiento: Option[Movimiento]): Try[ResultadoPelea] = Try {
-    require(isAlive, "No podes atacar muerto titan")
-    require(guerrero.isAlive, "atacaste a un tomuer denunciado salu2")
-    movimiento.map{_.aplicar(this, guerrero)}
-  }
+  def atacar(guerrero: Guerrero, movimiento: Option[Movimiento]): ResultadoPelea = movimiento.get(this, guerrero)
 
   /**
     * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
@@ -43,9 +39,9 @@ trait Guerrero {
     * (o al menos, con la menor desventaja) sobre los puntos de ki.
     * Al finalizar el round, el usuario debe poder tener acceso al nuevo estado del atacante y el defensor.
     */
-  def pelearRound(movimiento: Option[Movimiento], guerrero: Guerrero): Try[ResultadoPelea] = {
+  def pelearRound(movimiento: Option[Movimiento], guerrero: Guerrero): ResultadoPelea = {
     val resultado = this.atacar(guerrero, movimiento)
-    resultado.flatMap(res => res.elOtro.atacar(res.yo, res.elOtro.movimentoMasEfectivoContra(res.yo)(MenorDesventaja)))
+    resultado.elOtro.atacar(resultado.yo, resultado.elOtro.movimentoMasEfectivoContra(resultado.yo)(MenorDesventaja))
   }
 
   /**
@@ -57,7 +53,7 @@ trait Guerrero {
     *
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
-  def planDeAtaquecontra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
+  def planDeAtaqueContra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
 //    type state = (Option[ResultadoPelea], PlanDeAtaque)
 //
 //    def nextState(s: state): state = {
@@ -71,7 +67,7 @@ trait Guerrero {
 //    (1 to rounds).fold(seed) { (a, _) => nextState(a) }._2
 
     val primerMovimiento = this.movimentoMasEfectivoContra(guerrero)(criterio)
-    val primerResultado = p elearRound(primerMovimiento, guerrero)
+    val primerResultado = pelearRound(primerMovimiento, guerrero)
     (1 until  (rounds -1)).fold(primerResultado, Seq[Option[Movimiento]](primerMovimiento)) { (res, list) =>
 
     }
@@ -96,7 +92,10 @@ trait Guerrero {
     * *
     *
     */
-  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
+  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): Try[ResultadoPelea] = {
+    for {
+      ataque <- planDeAtaque
+    }
     planDeAtaque.fold(ResultadoPelea(this, guerrero)) {(s: ResultadoPelea, m: Option[Movimiento]) => s.yo.pelearRound(m, s.elOtro)}
   }
 

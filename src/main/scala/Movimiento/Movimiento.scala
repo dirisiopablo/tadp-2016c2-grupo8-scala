@@ -4,7 +4,7 @@ import Guerrero.ResultadoPelea
 import Guerrero.{Androide, Guerrero, Humano, Namekusein}
 
 trait Movimiento {
-  def aplicar(ejecutante: Guerrero, objetivo: Guerrero): ResultadoPelea
+  def apply(ejecutante: Guerrero, objetivo: Guerrero): ResultadoPelea
 }
 
 trait Ataque extends Movimiento
@@ -15,7 +15,7 @@ trait AtaqueEnergia extends Ataque
 
 case object MuchosGolpes extends AtaqueFisico {
 
-  def aplicar(ejecutante: Guerrero, atacado: Guerrero) = {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
       case (Androide(_), Humano(caracteristicas)) =>
         ResultadoPelea(ejecutante, atacado copiarConEnergia (atacado.energia - 10))
@@ -28,7 +28,7 @@ case object MuchosGolpes extends AtaqueFisico {
 }
 
 case object Explotar extends AtaqueFisico {
-  def aplicar(ejecutante: Guerrero, atacado: Guerrero) = {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
       case (Androide(caracteristicas), b) =>
         ResultadoPelea(ejecutante copiarConEnergia 0, b copiarConEnergia (b.energia - ejecutante.energia * 3))

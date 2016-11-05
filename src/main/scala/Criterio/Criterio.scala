@@ -27,8 +27,8 @@ trait Criterio {
 // mayor daño al otro
 case object MayorDanio extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val (_, ataca2) = movimiento.aplicar(ejecutante, atacado)
-    atacado.energia - ataca2.energia
+    val res = movimiento(ejecutante, atacado)
+    atacado.energia - res.elOtro.energia
   }
 
 }
@@ -36,31 +36,31 @@ case object MayorDanio extends Criterio {
 // menor daño al otro
 case object MenorDanio extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val (_, ataca2) = movimiento.aplicar(ejecutante, atacado)
-    ataca2.energia - atacado.energia
+    val res = movimiento(ejecutante, atacado)
+    res.elOtro.energia - atacado.energia
   }
 }
 
 // menor diferencia de ki entre los 2
 case object MenorDesventaja extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val (ejecuta2, ataca2) = movimiento.aplicar(ejecutante, atacado)
-    math.abs(ejecuta2.energia - ataca2.energia)
+    val res = movimiento(ejecutante, atacado)
+    math.abs(res.yo.energia - res.elOtro.energia)
   }
 }
 
 // el que gaste menos items del ejecutante
 case object GastarMenosItems extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val (ejecuta2, _) = movimiento.aplicar(ejecutante, atacado)
-    ejecutante.caracteristicas.inventario.length - ejecuta2.caracteristicas.inventario.length
+    val res = movimiento(ejecutante, atacado)
+    ejecutante.caracteristicas.inventario.length - res.yo.caracteristicas.inventario.length
   }
 }
 
 // cualquier cosa que no deje al ejecutante en 0
 case object QueNoMeMate extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val (ejecuta2, _) = movimiento.aplicar(ejecutante, atacado)
-    ejecuta2.energia
+    val res = movimiento(ejecutante, atacado)
+    res.yo.energia
   }
 }
