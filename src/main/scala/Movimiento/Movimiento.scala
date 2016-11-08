@@ -1,7 +1,7 @@
 package Movimiento
 
-import Guerrero.ResultadoPelea
-import Guerrero.{Androide, Guerrero, Humano, Namekusein}
+import ResultadoPelea._
+import Guerrero._
 
 trait Movimiento {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): ResultadoPelea
@@ -15,14 +15,15 @@ trait AtaqueEnergia extends Ataque
 
 case object MuchosGolpes extends AtaqueFisico {
 
+  // check if se murio
   def apply(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
       case (Androide(_), Humano(caracteristicas)) =>
-        ResultadoPelea(ejecutante, atacado copiarConEnergia (atacado.energia - 10))
+        SiguenPeleando(ejecutante, atacado copiarConEnergia (atacado.energia - 10))
       case _ if ejecutante.energia < atacado.energia =>
-        ResultadoPelea(ejecutante copiarConEnergia (ejecutante.energia - 20), atacado)
+        SiguenPeleando(ejecutante copiarConEnergia (ejecutante.energia - 20), atacado)
       case _ if ejecutante.energia > atacado.energia =>
-        ResultadoPelea(ejecutante, atacado copiarConEnergia (atacado.energia - 20))
+        SiguenPeleando(ejecutante, atacado copiarConEnergia (atacado.energia - 20))
     }
   }
 }
@@ -31,11 +32,11 @@ case object Explotar extends AtaqueFisico {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
       case (Androide(caracteristicas), b) =>
-        ResultadoPelea(ejecutante copiarConEnergia 0, b copiarConEnergia (b.energia - ejecutante.energia * 3))
+        Ganador(b copiarConEnergia (b.energia - ejecutante.energia * 3))
       case (Namekusein(caracteristicas), b) =>
-        ResultadoPelea(ejecutante copiarConEnergia 1, b copiarConEnergia (b.energia - ejecutante.energia * 2))
+        SiguenPeleando(ejecutante copiarConEnergia 1, b copiarConEnergia (b.energia - ejecutante.energia * 2))
       case _ =>
-        ResultadoPelea(ejecutante copiarConEnergia 0, atacado copiarConEnergia (atacado.energia - ejecutante.energia * 2))
+        Ganador(atacado copiarConEnergia (atacado.energia - ejecutante.energia * 2))
     }
   }
 }

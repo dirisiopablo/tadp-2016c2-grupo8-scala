@@ -2,6 +2,7 @@ package Guerrero
 
 import Item._
 import Movimiento.Movimiento
+import ResultadoPelea.{ResultadoPelea, SiguenPeleando}
 import Criterio.{Criterio, MenorDesventaja}
 
 import scala.util.Try
@@ -21,7 +22,7 @@ trait Guerrero {
 
   def isAlive: Boolean = energia > 0
 
-  def atacar(guerrero: Guerrero, movimiento: Option[Movimiento]): ResultadoPelea = movimiento.get(this, guerrero)
+  def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea = movimiento(this, guerrero)
 
   /**
     * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
@@ -49,7 +50,13 @@ trait Guerrero {
     * para realizar contra el oponente.
     * Luego debe simular la pelea de dicho round utilizando el movimiento elegido
     * y seleccionar el movimiento para el siguiente round basándose en el resultado de este.
-    * Si el guerrero no encuentra un movimiento satisfactorio para cada round pedido, NO DEBE retornarse un plan más corto.
+    *
+    *
+    * ESTO
+    * LEER ESTO -> Si el guerrero no encuentra un movimiento satisfactorio para cada round pedido,
+    *              NO DEBE retornarse un plan más corto.   <- ESTO
+    * ESO
+    *
     *
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
@@ -65,6 +72,8 @@ trait Guerrero {
 //
 //    val seed = ((this, guerrero), Seq[Movimiento]())
 //    (1 to rounds).fold(seed) { (a, _) => nextState(a) }._2
+
+    // todo: SI MOVIMIENTO ES NONE -> ROMPE TODO QUE ESTA TODO BIEN
 
     val primerMovimiento = this.movimentoMasEfectivoContra(guerrero)(criterio)
     val primerResultado = pelearRound(primerMovimiento, guerrero)
@@ -93,10 +102,8 @@ trait Guerrero {
     *
     */
   def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): Try[ResultadoPelea] = {
-    for {
-      ataque <- planDeAtaque
-    }
-    planDeAtaque.fold(ResultadoPelea(this, guerrero)) {(s: ResultadoPelea, m: Option[Movimiento]) => s.yo.pelearRound(m, s.elOtro)}
+    // PENSAR EL MAP DE RESULTADO Y SALE ARANDO
+    planDeAtaque.fold(SiguenPeleando(this, guerrero)) { (s: ResultadoPelea, m: Option[Movimiento]) => s.yo.pelearRound(m, s.elOtro)}
   }
 
 }
@@ -111,9 +118,6 @@ case class SiguenPeleando(yo: Guerrero, elOtro: Guerrero) extends ResultadoPelea
   def flatMap(f: Guerrero => Guerrero): SiguenPeleando = SiguenPeleando(f(yo), f(elOtro))
   def fold[T](e: (SiguenPeleando => T))(f: (SiguenPeleando => T)): T = f(this)
 }
-
-
-
 
 case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: List[Movimiento], energiaMax: Int, energia: Int)
 
