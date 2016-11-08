@@ -8,7 +8,7 @@ import scala.util.Try
 
 trait Guerrero {
 
-  type PlanDeAtaque = Seq[Option[Movimiento]]
+  type PlanDeAtaque = Option[Seq[Movimiento]]
 //  type ResultadoPelea = (Guerrero, Guerrero)
 
   val caracteristicas: Caracteristicas
@@ -39,7 +39,7 @@ trait Guerrero {
     * (o al menos, con la menor desventaja) sobre los puntos de ki.
     * Al finalizar el round, el usuario debe poder tener acceso al nuevo estado del atacante y el defensor.
     */
-  def pelearRound(movimiento: Option[Movimiento], guerrero: Guerrero): ResultadoPelea = {
+  def pelearRound(movimiento: Movimiento, guerrero: Guerrero): (Guerrero, Guerrero) = {
     val resultado = this.atacar(guerrero, movimiento)
     resultado.elOtro.atacar(resultado.yo, resultado.elOtro.movimentoMasEfectivoContra(resultado.yo)(MenorDesventaja))
   }
@@ -68,7 +68,7 @@ trait Guerrero {
 
     val primerMovimiento = this.movimentoMasEfectivoContra(guerrero)(criterio)
     val primerResultado = pelearRound(primerMovimiento, guerrero)
-    (1 until  (rounds -1)).fold(primerResultado, Seq[Option[Movimiento]](primerMovimiento)) { (res, list) =>
+    (1 until  (rounds -1)).fold(primerResultado, Seq[Option[Movimiento]](primerMovimiento)) { (res, elem) =>
 
     }
 
@@ -103,12 +103,17 @@ trait Guerrero {
 
 trait Fusionable
 
-case class ResultadoPelea(yo: Guerrero, elOtro: Guerrero) {
-  def map(f: Guerrero => Guerrero): ResultadoPelea = ResultadoPelea(f(yo), f(elOtro))
-  def filter(f: Guerrero => Boolean): ResultadoPelea = if (f(yo) && f(elOtro)) this else throw new Exception("Falló el filtrado.")
-  def flatMap(f: Guerrero => Guerrero): ResultadoPelea = ResultadoPelea(f(yo), f(elOtro))
-  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = f(this)
+trait ResultadoPelea
+
+case class SiguenPeleando(yo: Guerrero, elOtro: Guerrero) extends ResultadoPelea {
+  def map(f: Guerrero => Guerrero): SiguenPeleando = SiguenPeleando(f(yo), f(elOtro))
+  def filter(f: Guerrero => Boolean): SiguenPeleando = if (f(yo) && f(elOtro)) this else throw new Exception("Falló el filtrado.")
+  def flatMap(f: Guerrero => Guerrero): SiguenPeleando = SiguenPeleando(f(yo), f(elOtro))
+  def fold[T](e: (SiguenPeleando => T))(f: (SiguenPeleando => T)): T = f(this)
 }
+
+
+
 
 case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: List[Movimiento], energiaMax: Int, energia: Int)
 
