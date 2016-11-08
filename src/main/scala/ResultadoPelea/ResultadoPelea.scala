@@ -3,24 +3,21 @@ package ResultadoPelea
 import Guerrero.Guerrero
 
 trait ResultadoPelea {
-  def map(f: Guerrero => Guerrero): ResultadoPelea
-  def filter(f: Guerrero => Boolean): ResultadoPelea
-  def flatMap(f: Guerrero => ResultadoPelea): ResultadoPelea
-  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T
+  type SiguenPeleandoResult = (Guerrero, Guerrero)
+  type GanadorResult = Guerrero
 }
 
-case class SiguenPeleando(g1: Guerrero, g2: Guerrero) extends ResultadoPelea {
-  def map(f: Guerrero => Guerrero): ResultadoPelea = ???
-  def filter(f: Guerrero => Boolean): ResultadoPelea = ???
-  def flatMap(f: Guerrero => ResultadoPelea): ResultadoPelea = ???
-  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = ???
+case class SiguenPeleando(guerreros: (Guerrero, Guerrero)) extends ResultadoPelea {
+
+  def map(f: SiguenPeleandoResult => SiguenPeleandoResult): SiguenPeleando = SiguenPeleando(f(guerreros))
+  def filter(f: SiguenPeleandoResult => Boolean): SiguenPeleando = if (f(guerreros)) this else throw new Exception("Falló el filtrado.")
+  def flatMap(f: SiguenPeleandoResult => SiguenPeleando): SiguenPeleando = f(guerreros)
+  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = f(this)
 }
 
 case class Ganador(guerrero: Guerrero) extends ResultadoPelea {
-  def map(f: Guerrero => Guerrero): ResultadoPelea = this
-  def filter(f: Guerrero => Boolean): ResultadoPelea = ???
-  def flatMap(f: Guerrero => ResultadoPelea): ResultadoPelea = this
-  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = ???
+  def map(f: SiguenPeleandoResult => Ganador): Ganador = this
+  def filter(f: SiguenPeleandoResult => Boolean): Ganador = this
+  def flatMap(f: SiguenPeleandoResult => Ganador): Ganador = this
+  def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = f(this)
 }
-
-

@@ -22,7 +22,7 @@ trait Guerrero {
 
   def isAlive: Boolean = energia > 0
 
-  def atacar(guerrero: Guerrero, movimiento: Movimiento): ResultadoPelea = movimiento(this, guerrero)
+  def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = movimiento(this, guerrero)
 
   /**
     * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
@@ -40,17 +40,17 @@ trait Guerrero {
     * (o al menos, con la menor desventaja) sobre los puntos de ki.
     * Al finalizar el round, el usuario debe poder tener acceso al nuevo estado del atacante y el defensor.
     */
-  def pelearRound(movimiento: Movimiento, guerrero: Guerrero): (Guerrero, Guerrero) = {
-    val resultado = this.atacar(guerrero, movimiento)
-    resultado.elOtro.atacar(resultado.yo, resultado.elOtro.movimentoMasEfectivoContra(resultado.yo)(MenorDesventaja))
+  def pelearRound(movimiento: Movimiento)(guerrero: Guerrero): (Guerrero, Guerrero) = {
+    val (yo, elOtro) = this.atacar(guerrero, movimiento)
+    elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja).get)
+    //FIXME, en realidad siempre existe alguno que sea la menor desventaja
   }
 
   /**
-    * Para cada round solicitado, el sistema debe elegir el movimiento más efectivo de acuerdo al criterio recibido
-    * para realizar contra el oponente.
+    * Para cada round solicitado, el sistema debe elegir el movimiento más efectivo de acuerdo al criterio
+    * recibido para realizar contra el oponente.
     * Luego debe simular la pelea de dicho round utilizando el movimiento elegido
     * y seleccionar el movimiento para el siguiente round basándose en el resultado de este.
-    *
     *
     * ESTO
     * LEER ESTO -> Si el guerrero no encuentra un movimiento satisfactorio para cada round pedido,
@@ -61,26 +61,20 @@ trait Guerrero {
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
   def planDeAtaqueContra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
-//    type state = (Option[ResultadoPelea], PlanDeAtaque)
-//
-//    def nextState(s: state): state = {
-//      val yo = s._1.yo
-//      val elOtro = s._1.elOtro
-//      val mov = yo.movimentoMasEfectivoContra(elOtro)(criterio)
-//      (yo.pelearRound(mov, elOtro), s._2 :+ mov)
-//    }
-//
-//    val seed = ((this, guerrero), Seq[Movimiento]())
-//    (1 to rounds).fold(seed) { (a, _) => nextState(a) }._2
+    val planDeAtaque: PlanDeAtaque = Some(Seq[Movimiento]())
+    val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), planDeAtaque)
+    (1 to rounds).foldLeft(seed) { (res, _) =>
+      val ((atacante: Guerrero, atacado: Guerrero), plan: PlanDeAtaque) = res
+      val movimiento = atacante.movimentoMasEfectivoContra(atacado)(criterio)
 
-    // todo: SI MOVIMIENTO ES NONE -> ROMPE TODO QUE ESTA TODO BIEN
-
-    val primerMovimiento = this.movimentoMasEfectivoContra(guerrero)(criterio)
-    val primerResultado = pelearRound(primerMovimiento, guerrero)
-    (1 until  (rounds -1)).fold(primerResultado, Seq[Option[Movimiento]](primerMovimiento)) { (res, elem) =>
-
-    }
-
+      movimiento match {
+        case None => ((atacante, atacado), None)
+        case Some(mov) =>
+          val modifiedPlan = plan map { seq => seq :+ mov }
+          val nextState = atacante.pelearRound(mov)(atacado)
+          (nextState, modifiedPlan)
+      }
+    }._2
   }
 
   /**
@@ -110,22 +104,14 @@ trait Guerrero {
 
 trait Fusionable
 
-trait ResultadoPelea
-
-case class SiguenPeleando(yo: Guerrero, elOtro: Guerrero) extends ResultadoPelea {
-  def map(f: Guerrero => Guerrero): SiguenPeleando = SiguenPeleando(f(yo), f(elOtro))
-  def filter(f: Guerrero => Boolean): SiguenPeleando = if (f(yo) && f(elOtro)) this else throw new Exception("Falló el filtrado.")
-  def flatMap(f: Guerrero => Guerrero): SiguenPeleando = SiguenPeleando(f(yo), f(elOtro))
-  def fold[T](e: (SiguenPeleando => T))(f: (SiguenPeleando => T)): T = f(this)
-}
-
 case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: List[Movimiento], energiaMax: Int, energia: Int)
 
 case class Humano(caracteristicas: Caracteristicas) extends Guerrero with Fusionable {
   def copiarConEnergia(energia: Int): Humano = copy(caracteristicas copy (energia = energia))
 }
 
-case class Saiyajin(caracteristicas: Caracteristicas, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false) extends Guerrero with Fusionable {
+case class Saiyajin(caracteristicas: Caracteristicas, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false)
+  extends Guerrero with Fusionable {
   def copiarConEnergia(energia: Int): Saiyajin = copy(caracteristicas copy (energia = energia))
 }
 
