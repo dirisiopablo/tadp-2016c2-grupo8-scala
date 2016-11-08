@@ -10,7 +10,6 @@ import scala.util.Try
 trait Guerrero {
 
   type PlanDeAtaque = Option[Seq[Movimiento]]
-//  type ResultadoPelea = (Guerrero, Guerrero)
 
   val caracteristicas: Caracteristicas
 
@@ -40,10 +39,10 @@ trait Guerrero {
     * (o al menos, con la menor desventaja) sobre los puntos de ki.
     * Al finalizar el round, el usuario debe poder tener acceso al nuevo estado del atacante y el defensor.
     */
+  // siempre existe un movimiento que sea la menor desventaja
   def pelearRound(movimiento: Movimiento)(guerrero: Guerrero): (Guerrero, Guerrero) = {
     val (yo, elOtro) = this.atacar(guerrero, movimiento)
     elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja).get)
-    //FIXME, en realidad siempre existe alguno que sea la menor desventaja
   }
 
   /**
@@ -61,12 +60,13 @@ trait Guerrero {
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
   def planDeAtaqueContra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
+
     val planDeAtaque: PlanDeAtaque = Some(Seq[Movimiento]())
     val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), planDeAtaque)
-    (1 to rounds).foldLeft(seed) { (res, _) =>
+
+    val end = (1 to rounds).foldLeft(seed) { (res, _) =>
       val ((atacante: Guerrero, atacado: Guerrero), plan: PlanDeAtaque) = res
       val movimiento = atacante.movimentoMasEfectivoContra(atacado)(criterio)
-
       movimiento match {
         case None => ((atacante, atacado), None)
         case Some(mov) =>
@@ -74,7 +74,9 @@ trait Guerrero {
           val nextState = atacante.pelearRound(mov)(atacado)
           (nextState, modifiedPlan)
       }
-    }._2
+    }
+
+    end._2
   }
 
   /**
@@ -95,9 +97,9 @@ trait Guerrero {
     * *
     *
     */
-  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): Try[ResultadoPelea] = {
-    // PENSAR EL MAP DE RESULTADO Y SALE ARANDO
-    planDeAtaque.fold(SiguenPeleando(this, guerrero)) { (s: ResultadoPelea, m: Option[Movimiento]) => s.yo.pelearRound(m, s.elOtro)}
+  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
+    val seed = SiguenPeleando(this, guerrero)
+    planDeAtaque.fold(seed) { (s: ResultadoPelea, m: Movimiento) => s.map(pelearRound(m) }
   }
 
 }
