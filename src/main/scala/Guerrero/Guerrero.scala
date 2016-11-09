@@ -51,29 +51,28 @@ trait Guerrero {
     * Luego debe simular la pelea de dicho round utilizando el movimiento elegido
     * y seleccionar el movimiento para el siguiente round basándose en el resultado de este.
     *
-    * ESTO
-    * LEER ESTO -> Si el guerrero no encuentra un movimiento satisfactorio para cada round pedido,
-    *              NO DEBE retornarse un plan más corto.   <- ESTO
-    * ESO
-    *
+    * Si el guerrero no encuentra un movimiento satisfactorio para cada round pedido,
+    * NO DEBE retornarse un plan más corto.
     *
     * BONUS: Hacerlo sin usar recursividad ni asignación destructiva!
     */
   def planDeAtaqueContra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
 
-    val planDeAtaque: PlanDeAtaque = Some(Seq[Movimiento]())
+    val planDeAtaque: PlanDeAtaque = Option(Seq[Movimiento]())
     val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), planDeAtaque)
 
     val end = (1 to rounds).foldLeft(seed) { (res, _) =>
-      val ((atacante: Guerrero, atacado: Guerrero), plan: PlanDeAtaque) = res
+      val ((atacante, atacado), plan) = res
       val movimiento = atacante.movimentoMasEfectivoContra(atacado)(criterio)
-      movimiento match {
-        case None => ((atacante, atacado), None)
-        case Some(mov) =>
-          val modifiedPlan = plan map { seq => seq :+ mov }
-          val nextState = atacante.pelearRound(mov)(atacado)
-          (nextState, modifiedPlan)
-      }
+      movimiento.map { mov => (atacante.pelearRound(mov)(atacado), plan map {seq => seq :+ mov} )}
+
+//      movimiento match {
+//        case None => ((atacante, atacado), None)
+//        case Some(mov) =>
+//          val modifiedPlan = plan map { seq => seq :+ mov }
+//          val nextState = atacante.pelearRound(mov)(atacado)
+//          (nextState, modifiedPlan)
+//      }
     }
 
     end._2
