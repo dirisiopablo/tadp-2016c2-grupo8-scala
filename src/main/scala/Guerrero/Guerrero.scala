@@ -61,21 +61,19 @@ trait Guerrero {
     val planDeAtaque: PlanDeAtaque = Option(Seq[Movimiento]())
     val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), planDeAtaque)
 
-    val end = (1 to rounds).foldLeft(seed) { (res, _) =>
+    (1 to rounds).foldLeft(seed) { (res, _) =>
       val ((atacante, atacado), plan) = res
       val movimiento = atacante.movimentoMasEfectivoContra(atacado)(criterio)
-      movimiento.map { mov => (atacante.pelearRound(mov)(atacado), plan map {seq => seq :+ mov} )}
 
-//      movimiento match {
-//        case None => ((atacante, atacado), None)
-//        case Some(mov) =>
-//          val modifiedPlan = plan map { seq => seq :+ mov }
-//          val nextState = atacante.pelearRound(mov)(atacado)
-//          (nextState, modifiedPlan)
-//      }
-    }
+      movimiento match {
+        case None => ((atacante, atacado), None)
+        case Some(mov) =>
+          val modifiedPlan = plan map { seq => seq :+ mov }
+          val nextState = atacante.pelearRound(mov)(atacado)
+          (nextState, modifiedPlan)
+      }
+    }._2
 
-    end._2
   }
 
   /**
