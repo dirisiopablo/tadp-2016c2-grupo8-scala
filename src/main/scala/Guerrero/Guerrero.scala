@@ -97,11 +97,10 @@ trait Guerrero {
     * *
     *
     */
-  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): ResultadoPelea = {
-    val seed = SiguenPeleando(this, guerrero)
-    planDeAtaque.fold(seed) { (s: ResultadoPelea, m: Movimiento) => s.map(pelearRound(m) }
+  def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): Option[ResultadoPelea] = {
+    val seed: ResultadoPelea = SiguenPeleando(this, guerrero)
+    planDeAtaque.map { _.foldLeft(seed) { (s, m) => s.map(pelearRound(m)) } }
   }
-
 }
 
 trait Fusionable
