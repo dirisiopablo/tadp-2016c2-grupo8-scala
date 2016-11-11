@@ -27,8 +27,8 @@ trait Criterio {
 // mayor daño al otro
 case object MayorDanio extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val res = movimiento(ejecutante, atacado)
-    atacado.energia - res.elOtro.energia
+    val (_, a) = movimiento(ejecutante, atacado)
+    atacado.energia - a.energia
   }
 
 }
@@ -36,31 +36,31 @@ case object MayorDanio extends Criterio {
 // menor daño al otro
 case object MenorDanio extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val res = movimiento(ejecutante, atacado)
-    res.elOtro.energia - atacado.energia
+    val (_, a) = movimiento(ejecutante, atacado)
+    a.energia - atacado.energia
   }
 }
 
 // menor diferencia de ki entre los 2
 case object MenorDesventaja extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val res = movimiento(ejecutante, atacado)
-    math.abs(res.yo.energia - res.elOtro.energia)
+    val (e, a) = movimiento(ejecutante, atacado)
+    math.abs(e.energia - a.energia)
   }
 }
 
 // el que gaste menos items del ejecutante
 case object GastarMenosItems extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val res = movimiento(ejecutante, atacado)
-    ejecutante.caracteristicas.inventario.length - res.yo.caracteristicas.inventario.length
+    val (e, _) = movimiento(ejecutante, atacado)
+    ejecutante.caracteristicas.inventario.length - e.caracteristicas.inventario.length
   }
 }
 
 // cualquier cosa que no deje al ejecutante en 0
 case object QueNoMeMate extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
-    val res = movimiento(ejecutante, atacado)
-    res.yo.energia
+    val (e, _) = movimiento(ejecutante, atacado)
+    e.energia
   }
 }

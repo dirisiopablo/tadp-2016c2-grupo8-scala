@@ -5,8 +5,6 @@ import Movimiento.Movimiento
 import ResultadoPelea.{ResultadoPelea, SiguenPeleando}
 import Criterio.{Criterio, MenorDesventaja}
 
-import scala.util.Try
-
 trait Guerrero {
 
   type PlanDeAtaque = Option[Seq[Movimiento]]
@@ -58,22 +56,23 @@ trait Guerrero {
     */
   def planDeAtaqueContra(guerrero: Guerrero, rounds: Int)(criterio: Criterio): PlanDeAtaque = {
 
-    val planDeAtaque: PlanDeAtaque = Option(Seq[Movimiento]())
-    val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), planDeAtaque)
+    val emptyPlan: PlanDeAtaque = Option(Seq[Movimiento]())
+    val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), emptyPlan)
 
-    (1 to rounds).foldLeft(seed) { (res, _) =>
+    val (_, plan: PlanDeAtaque) = (1 to rounds).foldLeft(seed) { (res, _) =>
+
       val ((atacante, atacado), plan) = res
       val movimiento = atacante.movimentoMasEfectivoContra(atacado)(criterio)
 
-      movimiento match {
-        case None => ((atacante, atacado), None)
-        case Some(mov) =>
-          val modifiedPlan = plan map { seq => seq :+ mov }
-          val nextState = atacante.pelearRound(mov)(atacado)
-          (nextState, modifiedPlan)
+      movimiento.fold(((atacante, atacado), emptyPlan)) { mov =>
+        val modifiedPlan = plan map { seq => seq :+ mov }
+        val nextState = atacante.pelearRound(mov)(atacado)
+        (nextState, modifiedPlan)
       }
-    }._2
 
+    }
+
+    plan
   }
 
   /**

@@ -13,7 +13,6 @@ trait AtaqueFisico extends Ataque
 trait AtaqueEnergia extends Ataque
 
 case object MuchosGolpes extends AtaqueFisico {
-
   // check if se murio
   def apply(ejecutante: Guerrero, atacado: Guerrero) = {
     (ejecutante, atacado) match {
