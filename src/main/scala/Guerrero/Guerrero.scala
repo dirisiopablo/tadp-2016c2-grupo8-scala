@@ -15,6 +15,11 @@ trait Guerrero {
 
   def energia = caracteristicas.energia
 
+  def energiaMax = caracteristicas.energia
+
+// preguntar como hacer esto
+//  def copiar(c: AnyRef*): Guerrero
+
   def copiarConEnergia(energia: Int): Guerrero
 
   def isAlive: Boolean = energia > 0
