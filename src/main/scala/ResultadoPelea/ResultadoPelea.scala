@@ -18,7 +18,13 @@ case class Ganador(guerrero: Guerrero) extends ResultadoPelea {
 }
 
 case class SiguenPeleando(guerreros: (Guerrero, Guerrero)) extends ResultadoPelea {
-  def map(f: Guerrero => Guerreros): SiguenPeleando = SiguenPeleando(f(guerreros._2))
+  def map(f: Guerrero => Guerreros): ResultadoPelea = {
+    f(guerreros._2) match {
+      case (atacante, atacado) if atacado.energia < 0 => Ganador(atacante)
+      case (atacante, atacado) if atacante.energia < 0 => Ganador(atacado)
+      case (atacante, atacado) => SiguenPeleando((atacante, atacado))
+    }
+  }
   def filter(f: Guerreros => Boolean): ResultadoPelea = if (f(guerreros)) this else SinPelea()
   def flatMap(f: Guerreros => ResultadoPelea) = f(guerreros)
   def fold[T](e: (ResultadoPelea => T))(f: (ResultadoPelea => T)): T = f(this)
