@@ -13,3 +13,31 @@ case object SemillaDelErmitanio extends Item {
 case object FotoDeLaLuna extends Item {
   def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
 }
+
+case object EsferaDeUnaEstrella extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
+
+case object EsferaDeDosEstrellas extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
+
+case object EsferaDeTresEstrellas extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
+
+case object EsferaDeCuatroEstrellas extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
+
+case object EsferaDeCincoEstrellas extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
+
+case object EsferaDeSeisEstrellas extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
+
+case object EsferaDeSieteEstrellas extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}

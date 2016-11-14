@@ -38,7 +38,7 @@ class AtaqueSuite extends FunSuite {
     val listaItemsBuu = List()
     val listaMovimientosBuu = List(Explotar)
     val caracteristicasBuu = Caracteristicas("Buu", listaItemsBuu, listaMovimientosBuu, 3500, 3500)
-    val formaDigerirBuu = {g2: Guerrero => g2}
+    val formaDigerirBuu = {(g: Guerrero, g2: Guerrero) => g}
     val buu = Monstruo(caracteristicasBuu, formaDigerirBuu)
   }
 

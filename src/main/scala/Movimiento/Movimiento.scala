@@ -35,7 +35,7 @@ case object ComerseAlOponente extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
 
       case Monstruo(_, formaDeDigerir) if ejecutante.energia > atacado.energia =>
-        (formaDeDigerir(atacado), atacado copiarConEnergia 0)
+        (formaDeDigerir(ejecutante, atacado), atacado copiarConEnergia 0)
 
       case _ => (ejecutante, atacado) // que verguenza
   }

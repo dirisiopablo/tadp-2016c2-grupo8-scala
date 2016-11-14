@@ -15,13 +15,14 @@ trait Guerrero {
   def nombre = caracteristicas.nombre
 
   def energia = caracteristicas.energia
-  def energiaMax = caracteristicas.energia
+  def energiaMax = caracteristicas.energiaMax
 
   def itemList = caracteristicas.inventario
   def tieneItem(item: Item) = itemList contains item
 
   def copiarConEnergia(energia: Int): Guerrero
   def copiarConItems(items: List[Item]): Guerrero
+  def copiarConMovimientos(movimientos: List[Movimiento]): Guerrero
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = movimiento(this, guerrero)
 
@@ -110,30 +111,36 @@ case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: 
 case class Humano(caracteristicas: Caracteristicas) extends Guerrero with Fusionable {
   def copiarConEnergia(energia: Int): Humano = copy(caracteristicas copy (energia = energia))
   def copiarConItems(items: List[Item]): Humano = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Humano = copy(caracteristicas copy (movimientos = movimientos))
 }
 
 case class Saiyajin(caracteristicas: Caracteristicas, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false)
   extends Guerrero with Fusionable {
   def copiarConEnergia(energia: Int): Saiyajin = copy(caracteristicas copy (energia = energia))
   def copiarConItems(items: List[Item]): Saiyajin = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Saiyajin = copy(caracteristicas copy (movimientos = movimientos))
 }
 
 case class Androide(caracteristicas: Caracteristicas) extends Guerrero {
   def copiarConEnergia(energia: Int): Androide = copy(caracteristicas copy (energia = energia))
   def copiarConItems(items: List[Item]): Androide = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Androide = copy(caracteristicas copy (movimientos = movimientos))
 }
 
 case class Namekusein(caracteristicas: Caracteristicas) extends Guerrero with Fusionable {
   def copiarConEnergia(energia: Int): Namekusein = copy(caracteristicas copy (energia = energia))
   def copiarConItems(items: List[Item]): Namekusein = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Namekusein = copy(caracteristicas copy (movimientos = movimientos))
 }
 
-case class Monstruo(caracteristicas: Caracteristicas, formaDeDigerir: (Guerrero => Guerrero)) extends Guerrero {
+case class Monstruo(caracteristicas: Caracteristicas, formaDeDigerir: ((Guerrero, Guerrero) => Guerrero)) extends Guerrero {
   def copiarConEnergia(energia: Int): Monstruo = copy(caracteristicas copy (energia = energia))
   def copiarConItems(items: List[Item]): Monstruo = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Monstruo = copy(caracteristicas copy (movimientos = movimientos))
 }
 
 case class Fusionado(caracteristicas: Caracteristicas) extends Guerrero {
   def copiarConEnergia(energia: Int): Fusionado = copy(caracteristicas copy (energia = energia))
   def copiarConItems(items: List[Item]): Fusionado = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Fusionado = copy(caracteristicas copy (movimientos = movimientos))
 }
