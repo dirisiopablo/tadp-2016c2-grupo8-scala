@@ -11,13 +11,14 @@ trait Guerrero {
 
   val caracteristicas: Caracteristicas
   def movimientos = caracteristicas.movimientos
+
+  def nombre = caracteristicas.nombre
+
   def energia = caracteristicas.energia
   def energiaMax = caracteristicas.energia
+
   def itemList = caracteristicas.inventario
   def tieneItem(item: Item) = itemList contains item
-
-// preguntar como hacer esto
-//  def copiar(c: AnyRef*): Guerrero
 
   def copiarConEnergia(energia: Int): Guerrero
   def copiarConItems(items: List[Item]): Guerrero

@@ -9,3 +9,7 @@ trait Item {
 case object SemillaDelErmitanio extends Item {
   def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a copiarConEnergia a.energiaMax, b)
 }
+
+case object FotoDeLaLuna extends Item {
+  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
+}
