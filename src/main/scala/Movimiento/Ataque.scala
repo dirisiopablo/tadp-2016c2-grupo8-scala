@@ -31,4 +31,6 @@ case object Explotar extends AtaqueFisico {
 }
 
 // TODO
-case class Onda() extends AtaqueEnergia {}
+case class Onda() extends AtaqueEnergia {
+  def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = ???
+}

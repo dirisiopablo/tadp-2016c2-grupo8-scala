@@ -10,19 +10,14 @@ trait Guerrero {
   type PlanDeAtaque = Option[Seq[Movimiento]]
 
   val caracteristicas: Caracteristicas
-
   def movimientos = caracteristicas.movimientos
-
   def energia = caracteristicas.energia
-
   def energiaMax = caracteristicas.energia
 
 // preguntar como hacer esto
 //  def copiar(c: AnyRef*): Guerrero
 
   def copiarConEnergia(energia: Int): Guerrero
-
-  def isAlive: Boolean = energia > 0
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = movimiento(this, guerrero)
 
@@ -64,7 +59,7 @@ trait Guerrero {
     val emptyPlan: PlanDeAtaque = Option(Seq[Movimiento]())
     val seed: ((Guerrero, Guerrero), PlanDeAtaque) = ((this, guerrero), emptyPlan)
 
-    val (_, plan: PlanDeAtaque) = (1 to rounds).foldLeft(seed) { (res, _) =>
+    val (_, plan) = (1 to rounds).foldLeft(seed) { (res, _) =>
 
       val ((atacante, atacado), plan) = res
       val movimiento = atacante.movimentoMasEfectivoContra(atacado)(criterio)

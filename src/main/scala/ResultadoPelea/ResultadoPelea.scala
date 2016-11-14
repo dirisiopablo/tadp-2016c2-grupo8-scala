@@ -20,8 +20,8 @@ case class Ganador(guerrero: Guerrero) extends ResultadoPelea {
 case class SiguenPeleando(guerreros: (Guerrero, Guerrero)) extends ResultadoPelea {
   def map(f: Guerrero => Guerreros): ResultadoPelea = {
     f(guerreros._2) match {
-      case (atacante, atacado) if atacado.energia < 0 => Ganador(atacante)
-      case (atacante, atacado) if atacante.energia < 0 => Ganador(atacado)
+      case (atacante, atacado) if atacado.energia <= 0 => Ganador(atacante)
+      case (atacante, atacado) if atacante.energia <= 0 => Ganador(atacado)
       case (atacante, atacado) => SiguenPeleando((atacante, atacado))
     }
   }
