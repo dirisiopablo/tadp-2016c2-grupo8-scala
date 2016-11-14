@@ -19,14 +19,20 @@ case object MuchosGolpes extends AtaqueFisico {
 
 case object Explotar extends AtaqueFisico {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante, atacado) match {
-      case (Androide(caracteristicas), b) =>
-        (b copiarConEnergia (b.energia - ejecutante.energia * 3), ejecutante copiarConEnergia 0)
-      case (Namekusein(caracteristicas), b) => // FIXME
-        (ejecutante copiarConEnergia 1, b copiarConEnergia (b.energia - ejecutante.energia * 2))
-      case _ if ejecutante.isInstanceOf[Androide] || ejecutante.isInstanceOf[Monstruo] =>
-        (atacado copiarConEnergia (atacado.energia - ejecutante.energia * 2), ejecutante copiarConEnergia 0)
-      case _ =>
-        (ejecutante, atacado) // ¯\_(ツ)_/¯
+
+    case (Androide(_), Namekusein(_)) if atacado.energia <= ejecutante.energia * 3 =>
+      (ejecutante copiarConEnergia 0, atacado copiarConEnergia 1)
+
+    case (Monstruo(_, _), Namekusein(_)) if atacado.energia <= ejecutante.energia * 2 =>
+      (ejecutante copiarConEnergia 0, atacado copiarConEnergia 1)
+
+    case (Androide(_), _) =>
+      (ejecutante copiarConEnergia 0, atacado copiarConEnergia (atacado.energia - ejecutante.energia * 3))
+
+    case (Monstruo(_, _), _) =>
+      (ejecutante copiarConEnergia 0, atacado copiarConEnergia (atacado.energia - ejecutante.energia * 2))
+
+    case _ => (ejecutante, atacado) // ¯\_(ツ)_/¯
   }
 }
 

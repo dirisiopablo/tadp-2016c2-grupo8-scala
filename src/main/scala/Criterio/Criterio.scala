@@ -53,7 +53,7 @@ case object MenorDesventaja extends Criterio {
 case object GastarMenosItems extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
     val (e, _) = movimiento(ejecutante, atacado)
-    ejecutante.caracteristicas.inventario.length - e.caracteristicas.inventario.length
+    e.itemList.length - ejecutante.itemList.length
   }
 }
 
@@ -61,6 +61,6 @@ case object GastarMenosItems extends Criterio {
 case object QueNoMeMate extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
     val (e, _) = movimiento(ejecutante, atacado)
-    e.energia
+    e.energia - 1
   }
 }

@@ -6,7 +6,6 @@ import Item._
 trait Movimiento {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
   def copiarConEnergia(copiable:{def copy(caracteristicas: Caracteristicas); def caracteristicas():Caracteristicas},energiaNueva:Int) = copiable.copy(copiable.caracteristicas().copy(energia = energiaNueva))
-
 }
 
 case object DejarseFajar extends Movimiento {
@@ -25,7 +24,9 @@ case object Cargar extends Movimiento {
 }
 
 case class UsarItem(item: Item) extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) = item(ejecutante, atacado) //FIXME: validar que tenga el item
+  def apply(ejecutante: Guerrero, atacado: Guerrero) =
+    if(ejecutante tieneItem item) item(ejecutante copiarConItems(ejecutante.itemList diff List(item)), atacado)
+    else (ejecutante, atacado)
 }
 
 case object ComerseAlOponente extends Movimiento {
