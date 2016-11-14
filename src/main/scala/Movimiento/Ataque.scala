@@ -9,8 +9,8 @@ trait AtaqueEnergia extends Ataque //TODO: ver como centralizar la absorcion de 
 case object MuchosGolpes extends AtaqueFisico {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante, atacado) match {
 
-      case (Androide(_), Humano(caracteristicas)) =>
-        (ejecutante, atacado copiarConEnergia (atacado.energia - 10))
+      case (Humano(_), Androide(_)) =>
+        (ejecutante copiarConEnergia(ejecutante.energia - 10), atacado)
 
       case _ if ejecutante.energia < atacado.energia =>
         (ejecutante copiarConEnergia (ejecutante.energia - 20), atacado)
