@@ -13,8 +13,6 @@ val listaMovimientosVegeta = List[Movimiento](Cargar, UsarItem(SemillaDelErmitan
 val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 150, 10)
 val vegeta = Saiyajin(caracteristicasVegeta, cola = false, 0, estadoMono = false)
 
-val mov = goku.movimentoMasEfectivoContra(vegeta)(MayorDanio)
-
-val plan = goku.planDeAtaqueContra(vegeta, 1)(MayorDanio)
+val plan = goku.planDeAtaqueContra(vegeta, 4)(MayorDanio)
 
 goku.pelearContra(vegeta)(plan)

@@ -45,7 +45,7 @@ case object MenorDanio extends Criterio {
 case object MenorDesventaja extends Criterio {
   override def simular(ejecutante: Guerrero, atacado: Guerrero)(movimiento: Movimiento) = {
     val (e, a) = movimiento(ejecutante, atacado)
-    math.abs(e.energia - a.energia)
+    math.abs(e.energia + a.energia)
   }
 }
 

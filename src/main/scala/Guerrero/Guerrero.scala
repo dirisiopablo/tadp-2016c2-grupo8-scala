@@ -45,7 +45,8 @@ trait Guerrero {
   // siempre existe un movimiento que sea la menor desventaja
   def pelearRound(movimiento: Movimiento)(guerrero: Guerrero): (Guerrero, Guerrero) = {
     val (yo, elOtro) = this.atacar(guerrero, movimiento)
-    elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja).get)
+    val (elOtro2, yo2) = elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja).get)
+    (yo2, elOtro2)
   }
 
   /**

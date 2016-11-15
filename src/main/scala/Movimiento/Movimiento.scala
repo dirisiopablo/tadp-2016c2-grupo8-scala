@@ -15,13 +15,13 @@ case object Cargar extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
 
       case Saiyajin(caracteristicas, _, nivelSaiyajin, _) if nivelSaiyajin > 0 =>
-        (ejecutante copiarConEnergia (ejecutante.energia + 150 * nivelSaiyajin), atacado)
+        (ejecutante copiarConEnergia (ejecutante.energia + 150 * nivelSaiyajin min ejecutante.energiaMax), atacado)
 
       case Androide(_) =>
         (ejecutante, atacado) // ¯\_(ツ)_/¯
 
       case _ =>
-        (ejecutante copiarConEnergia (ejecutante.energia + 100), atacado)
+        (ejecutante copiarConEnergia (ejecutante.energia + 100 min ejecutante.energiaMax), atacado)
   }
 }
 
