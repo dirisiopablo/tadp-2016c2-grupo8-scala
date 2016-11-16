@@ -26,7 +26,8 @@ class MovimientoSuite extends FunSuite {
 
     val listaItemsPiccolo = List(EsferaDeUnaEstrella, EsferaDeDosEstrellas, EsferaDeTresEstrellas,
       EsferaDeCuatroEstrellas, EsferaDeCincoEstrellas, EsferaDeSeisEstrellas, EsferaDeSieteEstrellas)
-    val listaMovimientosPiccolo = List(Magia)
+    val esMagique = {(g1:Guerrero, g2:Guerrero) => (g1, g2.copiarConEnergia(2))}
+    val listaMovimientosPiccolo = List(Magia(esMagique))
     val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
     val piccolo = Namekusein(caracteristicasPiccolo)
 
@@ -137,7 +138,10 @@ class MovimientoSuite extends FunSuite {
   }
 
   test("Magia") {
-    assert(1 === 2)
+    new MovimientoTest {
+      val (p, b) = piccolo.atacar(buu, Magia(esMagique))
+      assert(p === piccolo && b.energia === 2)
+    }
   }
 
 }

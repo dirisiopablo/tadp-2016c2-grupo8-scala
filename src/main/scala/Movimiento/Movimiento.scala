@@ -25,9 +25,9 @@ case object Cargar extends Movimiento {
   }
 }
 
-case class UsarItem(item: Item) extends Movimiento {
+case class UsarItem(item: ItemUsable) extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) =
-    if(ejecutante tieneItem item) item(ejecutante copiarConItems(ejecutante.itemList diff List(item)), atacado)
+    if(ejecutante tieneItem item) item(ejecutante eliminarItem item, atacado)
     else (ejecutante, atacado)
 }
 
@@ -57,7 +57,7 @@ case object ConvertirseEnMono extends Movimiento {
         estadoMono = true
       )
 
-      val (monoSinLuna, _) = UsarItem(FotoDeLaLuna)(mono, atacado)
+      val monoSinLuna = mono eliminarItem FotoDeLaLuna
 
       (monoSinLuna, atacado)
 
@@ -103,7 +103,6 @@ case class FusionarseCon(elOtro: Guerrero) extends Movimiento {
   }
 }
 
-// ???????????????????????????????????????????????
-case object Magia extends Movimiento {
-  def apply(ejecutante: Guerrero, con: Guerrero) = ???
+case class Magia(magia: (Guerrero, Guerrero) => (Guerrero, Guerrero)) extends Movimiento {
+  def apply(ejecutante: Guerrero, con: Guerrero) = magia(ejecutante, con)
 }

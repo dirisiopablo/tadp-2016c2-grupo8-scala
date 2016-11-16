@@ -48,8 +48,6 @@ class GuerreroSuite extends FunSuite {
     }
   }
 
-  // TODO -> estan flojos los tests de plan
-
   test("Plan de ataque") {
     new GuerreroTest {
       val plan = goku.planDeAtaqueContra(vegeta, 7)(MayorDanio)

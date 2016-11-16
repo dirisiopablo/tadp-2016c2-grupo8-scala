@@ -24,12 +24,6 @@ class ArmaSuite extends FunSuite {
     val caracteristicasYamcha = Caracteristicas("Yamcha", listaItemsYamcha, listaMovimientosYamcha, 1, 1)
     val yamcha = Humano(caracteristicasYamcha)
 
-    val listaItemsPiccolo = List(EsferaDeUnaEstrella, EsferaDeDosEstrellas, EsferaDeTresEstrellas,
-      EsferaDeCuatroEstrellas, EsferaDeCincoEstrellas, EsferaDeSeisEstrellas, EsferaDeSieteEstrellas)
-    val listaMovimientosPiccolo = List(Magia)
-    val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
-    val piccolo = Namekusein(caracteristicasPiccolo)
-
     val listaItemsBuu = List()
     val listaMovimientosBuu = List(ComerseAlOponente)
     val caracteristicasBuu = Caracteristicas("Buu", listaItemsBuu, listaMovimientosBuu, 3500, 3500)

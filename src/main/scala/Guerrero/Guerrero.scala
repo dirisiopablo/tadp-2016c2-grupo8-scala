@@ -24,6 +24,8 @@ trait Guerrero {
   def copiarConItems(items: List[Item]): Guerrero
   def copiarConMovimientos(movimientos: List[Movimiento]): Guerrero
 
+  def eliminarItem(i: Item): Guerrero = copiarConItems(itemList diff List(i))
+
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = movimiento(this, guerrero)
 
   /**

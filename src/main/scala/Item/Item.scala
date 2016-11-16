@@ -2,42 +2,26 @@ package Item
 
 import Guerrero.Guerrero
 
-trait Item {
+trait Item
+
+trait ItemNoUsable extends Item
+
+trait ItemUsable extends Item {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
 }
 
-case object SemillaDelErmitanio extends Item {
+case object SemillaDelErmitanio extends ItemUsable {
   def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a copiarConEnergia a.energiaMax, b)
 }
 
-case object FotoDeLaLuna extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
+case object Municion extends ItemNoUsable
 
-case object EsferaDeUnaEstrella extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
+case object FotoDeLaLuna extends ItemNoUsable
 
-case object EsferaDeDosEstrellas extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
-
-case object EsferaDeTresEstrellas extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
-
-case object EsferaDeCuatroEstrellas extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
-
-case object EsferaDeCincoEstrellas extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
-
-case object EsferaDeSeisEstrellas extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
-
-case object EsferaDeSieteEstrellas extends Item {
-  def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a, b)
-}
+case object EsferaDeUnaEstrella extends ItemNoUsable
+case object EsferaDeDosEstrellas extends ItemNoUsable
+case object EsferaDeTresEstrellas extends ItemNoUsable
+case object EsferaDeCuatroEstrellas extends ItemNoUsable
+case object EsferaDeCincoEstrellas extends ItemNoUsable
+case object EsferaDeSeisEstrellas extends ItemNoUsable
+case object EsferaDeSieteEstrellas extends ItemNoUsable
