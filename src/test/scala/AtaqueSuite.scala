@@ -11,14 +11,20 @@ class AtaqueSuite extends FunSuite {
 
   trait AtaqueTest {
     val listaItemsGoku = List()
-    val listaMovimientosGoku = List(MuchosGolpes)
+    val listaMovimientosGoku = List(MuchosGolpes, Kamehameha)
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 9000)
     val goku = Saiyajin(caracteristicasGoku, cola = false, nivelSaiyajin = 0, estadoMono = false)
 
     val listaItemsVegeta = List()
-    val listaMovimientosVegeta = List(MuchosGolpes)
+    val listaMovimientosVegeta = List(MuchosGolpes, FinalFlash)
     val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 8000, 7500)
     val vegeta = Saiyajin(caracteristicasVegeta, cola = false, nivelSaiyajin = 0, estadoMono = false)
+
+    val listaItemsKrilin = List()
+    val listaMovimientosKrilin = List(OndaVitalTio)
+    // Si, ya arranca muerto el manco
+    val caracteristicasKrilin = Caracteristicas("Krilin", listaItemsKrilin, listaMovimientosKrilin, 100, 0)
+    val krilin = Humano(caracteristicasKrilin)
 
     val listaItems18 = List()
     val listaMovimientos18 = List(Explotar)
@@ -26,7 +32,7 @@ class AtaqueSuite extends FunSuite {
     val a18 = Androide(caracteristicas18)
 
     val listaItemsYamcha = List()
-    val listaMovimientosYamcha = List(MuchosGolpes)
+    val listaMovimientosYamcha = List(MuchosGolpes, OndaVitalTio)
     val caracteristicasYamcha = Caracteristicas("Yamcha", listaItemsYamcha, listaMovimientosYamcha, 1, 1)
     val yamcha = Humano(caracteristicasYamcha)
 
@@ -96,13 +102,25 @@ class AtaqueSuite extends FunSuite {
 
   test("Androide absorbe ataque de energia") {
     new AtaqueTest {
-      assert(1 === 2)
+      val energiaFinalRequerida = a18.energia + Kamehameha.kiRequerido
+      val(g, a) = goku.atacar(a18, Kamehameha)
+      assert(energiaFinalRequerida == a.energia)
+    }
+  }
+
+  test("Monstruo recibe kirequerido/2 de daño con ataque de energia") {
+    new AtaqueTest {
+      val energiaFinalRequerida = buu.energia - FinalFlash.kiRequerido / 2
+      val(v, b) = vegeta.atacar(buu, FinalFlash)
+      assert(energiaFinalRequerida == b.energia)
     }
   }
 
   test("Ataque de energia funciona") {
     new AtaqueTest {
-      assert(1 === 2)
+      val energiaFinalRequerida = vegeta.energia - Kamehameha.kiRequerido * 2
+      val(g, v) = goku.atacar(vegeta, Kamehameha)
+      assert(energiaFinalRequerida == v.energia)
     }
   }
 
@@ -120,7 +138,8 @@ class AtaqueSuite extends FunSuite {
 
   test("Guerrero muerto no ataca") {
     new AtaqueTest {
-      assert(1 === 2)
+      val(k, b) = krilin.atacar(buu, OndaVitalTio)
+      assert((k, b) === (krilin, buu))
     }
   }
 
