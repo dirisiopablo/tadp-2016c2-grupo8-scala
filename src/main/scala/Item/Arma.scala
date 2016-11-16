@@ -2,13 +2,13 @@ package Item
 
 import Guerrero._
 
-trait Arma extends Item {
+trait Arma extends ItemUsable {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
 }
 
 trait ArmaRoma extends Arma {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
-    case Androide(_) if objetivo.energia < 300 => (ejecutante, objetivo copiarConEnergia 0)
+    case Androide(_) if objetivo.energia < 300 => (ejecutante, objetivo copiarConEnergia 0) // TODO: no energia 0 -> inconsciente
     case _ => (ejecutante, objetivo) // ¯\_(ツ)_/¯
   }
 }
@@ -16,7 +16,7 @@ trait ArmaRoma extends Arma {
 trait ArmaFilosa extends Arma {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
 
-    case Saiyajin(c, tieneCola, n, false) if tieneCola =>
+    case Saiyajin(c, true, n, false) =>
 
       val saiyan = Saiyajin(
         caracteristicas = c.copy(energia = 1),
@@ -27,7 +27,7 @@ trait ArmaFilosa extends Arma {
 
       (ejecutante, saiyan)
 
-    case Saiyajin(c, cola, n, true) => // TODO inconsciente
+    case Saiyajin(c, _, n, true) => // TODO agregar inconsciente
 
       val saiyan = Saiyajin(
         caracteristicas = c,
@@ -51,3 +51,6 @@ trait ArmaDeFuego extends Arma {
   }
 }
 
+case object BraveSword extends ArmaFilosa
+case object Chumbo extends ArmaDeFuego
+case object Roma extends ArmaRoma

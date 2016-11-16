@@ -94,4 +94,34 @@ class AtaqueSuite extends FunSuite {
     }
   }
 
+  test("Androide absorbe ataque de energia") {
+    new AtaqueTest {
+      assert(1 === 2)
+    }
+  }
+
+  test("Ataque de energia funciona") {
+    new AtaqueTest {
+      assert(1 === 2)
+    }
+  }
+
+  test("Genkidama pega 10^rounds que se dejo fajar") {
+    new AtaqueTest {
+      assert(1 === 2)
+    }
+  }
+
+  test("Guerrero inconsciente no ataca") {
+    new AtaqueTest {
+      assert(1 === 2)
+    }
+  }
+
+  test("Guerrero muerto no ataca") {
+    new AtaqueTest {
+      assert(1 === 2)
+    }
+  }
+
 }

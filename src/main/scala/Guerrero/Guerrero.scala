@@ -29,7 +29,7 @@ trait Guerrero {
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = movimiento(this, guerrero)
 
   /**
-    * Si el resultado del criterio es igual o menor a 0 significa que el movimiento no es deseable en absoluto
+    * Si el resultado del criterio es menor a 0 significa que el movimiento no es deseable en absoluto
     * y no debe ser considerado una respuesta válida.
   */
   def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Option[Movimiento] = {
@@ -46,9 +46,9 @@ trait Guerrero {
     */
   // siempre existe un movimiento que sea la menor desventaja
   def pelearRound(movimiento: Movimiento)(guerrero: Guerrero): (Guerrero, Guerrero) = {
-    val (yo, elOtro) = this.atacar(guerrero, movimiento)
-    val (elOtro2, yo2) = elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja).get)
-    (yo2, elOtro2)
+    val (yo, elOtro) = this.atacar(guerrero, movimiento) // ataque
+    val (elOtro2, yo2) = elOtro.atacar(yo, elOtro.movimentoMasEfectivoContra(yo)(MenorDesventaja).get) // contraataque
+    (yo2, elOtro2) // estado final
   }
 
   /**
