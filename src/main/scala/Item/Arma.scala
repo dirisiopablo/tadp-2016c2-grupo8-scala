@@ -44,14 +44,19 @@ trait ArmaFilosa extends Arma {
 }
 
 trait ArmaDeFuego extends Arma {
+  val municionRequerida: Municion
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
-    case _ if !ejecutante.tieneItem(Municion) => (ejecutante, objetivo)
-    case Humano(_) => (ejecutante eliminarItem Municion, objetivo copiarConEnergia (objetivo.energia - 20))
-    case Namekusein(_) => (ejecutante eliminarItem Municion, objetivo copiarConEnergia(objetivo.energia - 10)) // TODO si esta inconsciente..
+    case _ if !ejecutante.tieneItem(municionRequerida) => (ejecutante, objetivo)
+    case Humano(_) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia (objetivo.energia - 20))
+    case Namekusein(_) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia(objetivo.energia - 10)) // TODO si esta inconsciente..
     case _ => (ejecutante, objetivo) // ¯\_(ツ)_/¯
   }
 }
 
 case object BraveSword extends ArmaFilosa
-case object Chumbo extends ArmaDeFuego
+
+case object Chumbo extends ArmaDeFuego {
+  override val municionRequerida: Municion = BalaDeChumbo
+}
+
 case object Roma extends ArmaRoma

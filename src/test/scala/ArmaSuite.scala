@@ -28,10 +28,15 @@ class ArmaSuite extends FunSuite {
     val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
     val piccolo = Namekusein(caracteristicasPiccolo)
 
-    val listaItemsLaunch = List(Chumbo, Municion, Municion, Municion) // TODO agregar otro tipo de municion
+    val listaItemsLaunch = List(Chumbo, BalaDeChumbo, BalaDeChumbo, BalaDeChumbo, MisilAntiaereo)
     val listaMovimientosLaunch = List(UsarItem(Chumbo))
     val caracteristicasLaunch = Caracteristicas("Launch", listaItemsLaunch, listaMovimientosLaunch, 50, 50)
     val launch = Humano(caracteristicasLaunch)
+
+    val listaItemsLaunchRubia = List(Chumbo, BalaDeBasoca, BalaDeBasoca, MisilAntiaereo)
+    val listaMovimientosLaunchRubia = List(UsarItem(Chumbo))
+    val caracteristicasLaunchRubia = Caracteristicas("LaunchRubia", listaItemsLaunchRubia, listaMovimientosLaunchRubia, 50, 50)
+    val launchRubia = Humano(caracteristicasLaunchRubia)
 
     val listaItemsBulma = List(Roma)
     val listaMovimientosBulma = List(UsarItem(Roma))
@@ -78,19 +83,22 @@ class ArmaSuite extends FunSuite {
 
   test("Arma de fuego no hace nada sin municion adecuada") {
     new ArmaTest {
-      assert(1 === 2)
+      val (l, b) = launchRubia.atacar(bulma, UsarItem(Chumbo))
+      assert((l, b) === (launchRubia, bulma))
     }
   }
 
   test("Arma de fuego no hace nada si no sos humano o namek inconsciente") {
     new ArmaTest {
-      assert(1 === 2)
+      val (l, t) = launch.atacar(trunks, UsarItem(Chumbo))
+      assert((l, t) === (launch, trunks))
     }
   }
 
   test("Arma de fuego gasta municion adecuada") {
     new ArmaTest {
-      assert(1 === 2)
+      val (l, _) = launch.atacar(trunks, UsarItem(Chumbo))
+      assert(l.itemList === launch.eliminarItem(BalaDeChumbo))
     }
   }
 

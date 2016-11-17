@@ -16,7 +16,10 @@ case object SemillaDelErmitanio extends ItemUsable {
   override def esArma: Boolean = false
 }
 
-case object Municion extends ItemNoUsable
+trait Municion extends ItemNoUsable
+case object BalaDeChumbo extends Municion
+case object BalaDeBasoca extends Municion
+case object MisilAntiaereo extends Municion
 
 case object FotoDeLaLuna extends ItemNoUsable
 

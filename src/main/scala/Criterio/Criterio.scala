@@ -30,7 +30,6 @@ case object MayorDanio extends Criterio {
     val (_, a) = movimiento(ejecutante, atacado)
     atacado.energia - a.energia
   }
-
 }
 
 // menor daño al otro
