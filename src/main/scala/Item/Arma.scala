@@ -4,6 +4,7 @@ import Guerrero._
 
 trait Arma extends ItemUsable {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
+  override def esArma: Boolean = true
 }
 
 trait ArmaRoma extends Arma {

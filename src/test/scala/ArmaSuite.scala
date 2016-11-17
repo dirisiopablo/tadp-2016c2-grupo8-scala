@@ -32,6 +32,11 @@ class ArmaSuite extends FunSuite {
     val listaMovimientosLaunch = List(UsarItem(Chumbo))
     val caracteristicasLaunch = Caracteristicas("Launch", listaItemsLaunch, listaMovimientosLaunch, 50, 50)
     val launch = Humano(caracteristicasLaunch)
+
+    val listaItemsBulma = List(Roma)
+    val listaMovimientosBulma = List(UsarItem(Roma))
+    val caracteristicasBulma = Caracteristicas("Bulma", listaItemsBulma, listaMovimientosBulma, 50, 50)
+    val bulma = Humano(caracteristicasBulma)
   }
 
   test("El arma no se consume") {
@@ -103,7 +108,9 @@ class ArmaSuite extends FunSuite {
 
   test("Arma de fuego pega 20 a humano") {
     new ArmaTest {
-      assert(1 === 2)
+      val energiaFinalRequerida = bulma.energia - 20
+      val(l, b) = launch.atacar(bulma, UsarItem(Chumbo))
+      assert(b.energia == energiaFinalRequerida)
     }
   }
 
@@ -115,7 +122,8 @@ class ArmaSuite extends FunSuite {
 
   test("Arma roma no hace nada contra otra cosa que no sea androide con menos de 300 de energia") {
     new ArmaTest {
-      assert(1 === 2)
+      val (b, v) = bulma.atacar(vegeta, UsarItem(Roma))
+      assert((b, v) === (bulma, vegeta))
     }
   }
 

@@ -2,6 +2,7 @@ package Movimiento
 
 import Guerrero._
 import Item._
+import Item.Arma
 
 trait Movimiento {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
@@ -26,9 +27,14 @@ case object Cargar extends Movimiento {
 }
 
 case class UsarItem(item: ItemUsable) extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) =
-    if(ejecutante tieneItem item) item(ejecutante eliminarItem item, atacado)
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = {
+    if(ejecutante tieneItem item) {
+      if (item.esArma) item(ejecutante, atacado)
+      else item(ejecutante eliminarItem item, atacado)
+    }
     else (ejecutante, atacado)
+  }
+
 }
 
 case object ComerseAlOponente extends Movimiento {

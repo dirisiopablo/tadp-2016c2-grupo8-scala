@@ -8,10 +8,12 @@ trait ItemNoUsable extends Item
 
 trait ItemUsable extends Item {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
+  def esArma: Boolean //FIXME: refactor plzzz
 }
 
 case object SemillaDelErmitanio extends ItemUsable {
   def apply(a: Guerrero, b: Guerrero): (Guerrero, Guerrero) = (a copiarConEnergia a.energiaMax, b)
+  override def esArma: Boolean = false
 }
 
 case object Municion extends ItemNoUsable
