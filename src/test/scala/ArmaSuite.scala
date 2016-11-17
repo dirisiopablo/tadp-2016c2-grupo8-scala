@@ -98,7 +98,7 @@ class ArmaSuite extends FunSuite {
   test("Arma de fuego gasta municion adecuada") {
     new ArmaTest {
       val (l, _) = launch.atacar(trunks, UsarItem(Chumbo))
-      assert(l.itemList === launch.eliminarItem(BalaDeChumbo))
+      assert(l.itemList === launch.eliminarItem(BalaDeChumbo).itemList)
     }
   }
 

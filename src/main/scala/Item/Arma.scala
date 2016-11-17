@@ -49,7 +49,7 @@ trait ArmaDeFuego extends Arma {
     case _ if !ejecutante.tieneItem(municionRequerida) => (ejecutante, objetivo)
     case Humano(_) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia (objetivo.energia - 20))
     case Namekusein(_) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia(objetivo.energia - 10)) // TODO si esta inconsciente..
-    case _ => (ejecutante, objetivo) // ¯\_(ツ)_/¯
+    case _ => (ejecutante eliminarItem municionRequerida, objetivo) // ¯\_(ツ)_/¯
   }
 }
 
