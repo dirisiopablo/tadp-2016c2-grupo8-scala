@@ -10,38 +10,45 @@ class ArmaSuite extends FunSuite {
 
   trait ArmaTest {
     val caracteristicasVegeta = Caracteristicas("Vegeta", List(), List(), 8000, 6400)
-    val vegeta = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = false)
-    val vegetaMono = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = true)
+    val vegeta = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
+    val vegetaMono = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = true, inconsciente = false)
 
     val listaItemsTrunks = List(BraveSword)
     val listaMovimientosTrunks = List(UsarItem(BraveSword))
     val caracteristicasTrunks = Caracteristicas("Trunks", listaItemsTrunks, listaMovimientosTrunks, 5000, 1500)
-    val trunks = Saiyajin(caracteristicasTrunks, cola = false, nivelSaiyajin = 0, estadoMono = false)
+    val trunks = Saiyajin(caracteristicasTrunks, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
 
     val caracteristicasYamcha = Caracteristicas("Yamcha", List(), List(), 700, 700)
-    val yamcha = Humano(caracteristicasYamcha)
+    val yamcha = Humano(caracteristicasYamcha, inconsciente = false)
 
     val listaItemsPiccolo = List(EsferaDeUnaEstrella, EsferaDeDosEstrellas, EsferaDeTresEstrellas,
       EsferaDeCuatroEstrellas, EsferaDeCincoEstrellas, EsferaDeSeisEstrellas, EsferaDeSieteEstrellas)
     val esMagique = {(g1:Guerrero, g2:Guerrero) => (g1, g2.copiarConEnergia(2))}
     val listaMovimientosPiccolo = List(Magia(esMagique))
     val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
-    val piccolo = Namekusein(caracteristicasPiccolo)
+    val piccolo = Namekusein(caracteristicasPiccolo, inconsciente = false)
+
+    val piccoloInconsciente = Namekusein(caracteristicasPiccolo, inconsciente = true)
 
     val listaItemsLaunch = List(Chumbo, BalaDeChumbo, BalaDeChumbo, BalaDeChumbo, MisilAntiaereo)
     val listaMovimientosLaunch = List(UsarItem(Chumbo))
     val caracteristicasLaunch = Caracteristicas("Launch", listaItemsLaunch, listaMovimientosLaunch, 50, 50)
-    val launch = Humano(caracteristicasLaunch)
+    val launch = Humano(caracteristicasLaunch, inconsciente = false)
 
     val listaItemsLaunchRubia = List(Chumbo, BalaDeBasoca, BalaDeBasoca, MisilAntiaereo)
     val listaMovimientosLaunchRubia = List(UsarItem(Chumbo))
     val caracteristicasLaunchRubia = Caracteristicas("LaunchRubia", listaItemsLaunchRubia, listaMovimientosLaunchRubia, 50, 50)
-    val launchRubia = Humano(caracteristicasLaunchRubia)
+    val launchRubia = Humano(caracteristicasLaunchRubia, inconsciente = false)
 
     val listaItemsBulma = List(Roma)
     val listaMovimientosBulma = List(UsarItem(Roma))
     val caracteristicasBulma = Caracteristicas("Bulma", listaItemsBulma, listaMovimientosBulma, 50, 50)
-    val bulma = Humano(caracteristicasBulma)
+    val bulma = Humano(caracteristicasBulma, inconsciente = false)
+
+    val listaItemsChichi = List(Roma)
+    val listaMovimientosChichi = List(UsarItem(Roma))
+    val caracteristicasChichi = Caracteristicas("Bulma", listaItemsBulma, listaMovimientosBulma, 50, 50)
+    val chichi = Humano(caracteristicasChichi, inconsciente = false)
   }
 
   test("El arma no se consume") {
@@ -55,7 +62,7 @@ class ArmaSuite extends FunSuite {
     new ArmaTest {
       val (_, v) = trunks.atacar(vegeta, UsarItem(BraveSword))
       v match {
-        case Saiyajin(_, false, _, _) => succeed
+        case Saiyajin(_, false, _, _, _) => succeed
         case _ => fail
       }
     }
@@ -70,7 +77,9 @@ class ArmaSuite extends FunSuite {
 
   test("Arma filosa deja saiyajin mono inconsciente") {
     new ArmaTest {
-      assert(1 === 2)
+      val (_, v) = trunks.atacar(vegetaMono, UsarItem(BraveSword))
+      val vi = v.asInstanceOf[Inconscientable]
+      assert(vi.inconsciente)
     }
   }
 
@@ -88,12 +97,12 @@ class ArmaSuite extends FunSuite {
     }
   }
 
-  test("Arma de fuego no hace nada si no sos humano o namek inconsciente") {
-    new ArmaTest {
-      val (l, t) = launch.atacar(trunks, UsarItem(Chumbo))
-      assert((l, t) === (launch, trunks))
-    }
-  }
+//  test("Arma de fuego no hace nada si no sos humano o namek inconsciente") {
+//    new ArmaTest {
+//      val (l, t) = launch.atacar(trunks, UsarItem(Chumbo))
+//      assert((l, t) === (launch, trunks))
+//    }
+//  }
 
   test("Arma de fuego gasta municion adecuada") {
     new ArmaTest {
@@ -104,13 +113,15 @@ class ArmaSuite extends FunSuite {
 
   test("Arma de fuego no hace nada contra namek no inconsciente") {
     new ArmaTest {
-      assert(1 === 2)
+      val (l, p) = launch.atacar(piccolo, UsarItem(Chumbo))
+      assert(p === piccolo)
     }
   }
 
   test("Arma de fuego pega 10 a namek inconsciente") {
     new ArmaTest {
-      assert(1 === 2)
+      val (l, p) = launch.atacar(piccoloInconsciente, UsarItem(Chumbo))
+      assert(p.energia === piccoloInconsciente.energia - 10)
     }
   }
 
@@ -122,13 +133,15 @@ class ArmaSuite extends FunSuite {
     }
   }
 
-  test("Arma roma deja inconsciente a androide con menos de 300 energia") {
+  test("Arma roma deja inconsciente a no-androide con menos de 300 energia") {
     new ArmaTest {
-      assert(1 === 2)
+      val(b, c) = bulma.atacar(chichi, UsarItem(Roma))
+      val ch = c.asInstanceOf[Inconscientable]
+      assert(ch.inconsciente)
     }
   }
 
-  test("Arma roma no hace nada contra otra cosa que no sea androide con menos de 300 de energia") {
+  test("Arma roma no hace nada contra algo que no sea androide con más de 300 de energia") {
     new ArmaTest {
       val (b, v) = bulma.atacar(vegeta, UsarItem(Roma))
       assert((b, v) === (bulma, vegeta))

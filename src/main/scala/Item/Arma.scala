@@ -9,7 +9,7 @@ trait Arma extends ItemUsable {
 
 trait ArmaRoma extends Arma {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
-    case Androide(_) if objetivo.energia < 300 => (ejecutante, objetivo copiarConEnergia 0) // TODO: no energia 0 -> inconsciente
+    case objetivo: Inconscientable if objetivo.energia < 300 => (ejecutante, objetivo.copiarInconsciente)
     case _ => (ejecutante, objetivo) // ¯\_(ツ)_/¯
   }
 }
@@ -17,24 +17,29 @@ trait ArmaRoma extends Arma {
 trait ArmaFilosa extends Arma {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
 
-    case Saiyajin(c, true, n, false) =>
+    case Saiyajin(c, true, n, false, i) =>
 
-      val saiyan = Saiyajin(
-        caracteristicas = c.copy(energia = 1),
-        cola = false,
-        nivelSaiyajin = n,
-        estadoMono = false
-      )
+//      val saiyan = Saiyajin(
+//        caracteristicas = c.copy(energia = 1),
+//        cola = false,
+//        nivelSaiyajin = n,
+//        estadoMono = false,
+//        inconsciente = i
+//      )
+
+      val saiyan = ejecutante.asInstanceOf[Saiyajin]
+        .copy(caracteristicas = c.copy(energia = 1), cola = false)
 
       (ejecutante, saiyan)
 
-    case Saiyajin(c, _, n, true) => // TODO agregar inconsciente
+    case Saiyajin(c, _, n, true, i) =>
 
       val saiyan = Saiyajin(
         caracteristicas = c,
         cola = false,
         nivelSaiyajin = n,
-        estadoMono = false
+        estadoMono = false,
+        inconsciente = true
       )
 
       (ejecutante, saiyan)
@@ -47,8 +52,8 @@ trait ArmaDeFuego extends Arma {
   val municionRequerida: Municion
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
     case _ if !ejecutante.tieneItem(municionRequerida) => (ejecutante, objetivo)
-    case Humano(_) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia (objetivo.energia - 20))
-    case Namekusein(_) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia(objetivo.energia - 10)) // TODO si esta inconsciente..
+    case Humano(_, _) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia (objetivo.energia - 20))
+    case Namekusein(_, true) => (ejecutante eliminarItem municionRequerida, objetivo copiarConEnergia(objetivo.energia - 10))
     case _ => (ejecutante eliminarItem municionRequerida, objetivo) // ¯\_(ツ)_/¯
   }
 }

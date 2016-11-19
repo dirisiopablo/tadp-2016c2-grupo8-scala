@@ -2,7 +2,6 @@ package Movimiento
 
 import Guerrero._
 import Item._
-import Item.Arma
 
 trait Movimiento {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero)
@@ -15,7 +14,7 @@ case object DejarseFajar extends Movimiento {
 case object Cargar extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
 
-      case Saiyajin(caracteristicas, _, nivelSaiyajin, _) if nivelSaiyajin > 0 =>
+      case Saiyajin(caracteristicas, _, nivelSaiyajin, _, _) if nivelSaiyajin > 0 =>
         (ejecutante copiarConEnergia (ejecutante.energia + 150 * nivelSaiyajin min ejecutante.energiaMax), atacado)
 
       case Androide(_) =>
@@ -40,7 +39,7 @@ case class UsarItem(item: ItemUsable) extends Movimiento {
 case object ComerseAlOponente extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
 
-      case Monstruo(_, formaDeDigerir) if ejecutante.energia > atacado.energia =>
+      case Monstruo(_, formaDeDigerir, _) if ejecutante.energia > atacado.energia =>
         (formaDeDigerir(ejecutante, atacado), atacado copiarConEnergia 0)
 
       case _ => (ejecutante, atacado) // que verguenza
@@ -50,7 +49,7 @@ case object ComerseAlOponente extends Movimiento {
 case object ConvertirseEnMono extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
 
-    case Saiyajin(caracteristicas, cola, nivelSaiyajin, estadoMono)
+    case Saiyajin(caracteristicas, cola, nivelSaiyajin, estadoMono, _)
       if cola && nivelSaiyajin == 0 && !estadoMono && ejecutante.tieneItem(FotoDeLaLuna) =>
 
       val mono = Saiyajin(
@@ -60,7 +59,8 @@ case object ConvertirseEnMono extends Movimiento {
         ),
         cola = cola,
         nivelSaiyajin = 0,
-        estadoMono = true
+        estadoMono = true,
+        inconsciente = false
       )
 
       val monoSinLuna = mono eliminarItem FotoDeLaLuna
@@ -74,13 +74,14 @@ case object ConvertirseEnMono extends Movimiento {
 case object ConvertirseEnSuperSaiyajin extends Movimiento {
   def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
 
-      case Saiyajin(caracteristicas, cola, nivelSaiyajin, estadoMono) if ejecutante.energia * 2 > ejecutante.energiaMax =>
+      case Saiyajin(caracteristicas, cola, nivelSaiyajin, estadoMono, inconsciente) if ejecutante.energia * 2 > ejecutante.energiaMax =>
 
         val ssj = Saiyajin(
           caracteristicas = caracteristicas.copy(energiaMax = ejecutante.energiaMax * 5),
           cola = cola,
           nivelSaiyajin = nivelSaiyajin + 1,
-          estadoMono = estadoMono
+          estadoMono = estadoMono,
+          inconsciente = inconsciente
         )
 
         (ssj, atacado)
@@ -101,7 +102,7 @@ case class FusionarseCon(elOtro: Guerrero) extends Movimiento {
           movimientos = a.movimientos ++ b.movimientos,
           energiaMax = a.energiaMax + b.energiaMax,
           energia = a.energia + b.energia
-        ))
+        ), inconsciente = false)
 
         (fusionado, atacado)
 

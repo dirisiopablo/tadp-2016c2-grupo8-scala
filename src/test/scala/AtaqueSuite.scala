@@ -3,8 +3,6 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import Guerrero._
 import Movimiento._
-import Criterio._
-import Item._
 
 @RunWith(classOf[JUnitRunner])
 class AtaqueSuite extends FunSuite {
@@ -13,18 +11,18 @@ class AtaqueSuite extends FunSuite {
     val listaItemsGoku = List()
     val listaMovimientosGoku = List(MuchosGolpes, Kamehameha)
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 9000)
-    val goku = Saiyajin(caracteristicasGoku, cola = false, nivelSaiyajin = 0, estadoMono = false)
+    val goku = Saiyajin(caracteristicasGoku, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
 
     val listaItemsVegeta = List()
     val listaMovimientosVegeta = List(MuchosGolpes, FinalFlash)
     val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 8000, 7500)
-    val vegeta = Saiyajin(caracteristicasVegeta, cola = false, nivelSaiyajin = 0, estadoMono = false)
+    val vegeta = Saiyajin(caracteristicasVegeta, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
 
     val listaItemsKrilin = List()
     val listaMovimientosKrilin = List(OndaVitalTio)
     // Si, ya arranca muerto el manco
     val caracteristicasKrilin = Caracteristicas("Krilin", listaItemsKrilin, listaMovimientosKrilin, 100, 0)
-    val krilin = Humano(caracteristicasKrilin)
+    val krilin = Humano(caracteristicasKrilin, inconsciente = false)
 
     val listaItems18 = List()
     val listaMovimientos18 = List(Explotar)
@@ -34,18 +32,20 @@ class AtaqueSuite extends FunSuite {
     val listaItemsYamcha = List()
     val listaMovimientosYamcha = List(MuchosGolpes, OndaVitalTio)
     val caracteristicasYamcha = Caracteristicas("Yamcha", listaItemsYamcha, listaMovimientosYamcha, 1, 1)
-    val yamcha = Humano(caracteristicasYamcha)
+    val yamcha = Humano(caracteristicasYamcha, inconsciente = false)
 
     val listaItemsPiccolo = List()
     val listaMovimientosPiccolo = List(MuchosGolpes)
     val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
-    val piccolo = Namekusein(caracteristicasPiccolo)
+    val piccolo = Namekusein(caracteristicasPiccolo, inconsciente = false)
+
+    val piccoloInconsciente = Namekusein(caracteristicasPiccolo, inconsciente = true)
 
     val listaItemsBuu = List()
     val listaMovimientosBuu = List(Explotar)
     val caracteristicasBuu = Caracteristicas("Buu", listaItemsBuu, listaMovimientosBuu, 3500, 3500)
     val formaDigerirBuu = {(g: Guerrero, g2: Guerrero) => g}
-    val buu = Monstruo(caracteristicasBuu, formaDigerirBuu)
+    val buu = Monstruo(caracteristicasBuu, formaDigerirBuu, inconsciente = false)
   }
 
   test("Muchos golpes con mas energia") {
@@ -132,7 +132,8 @@ class AtaqueSuite extends FunSuite {
 
   test("Guerrero inconsciente no ataca") {
     new AtaqueTest {
-      assert(1 === 2)
+      val (pi, v) = piccoloInconsciente.atacar(vegeta, MuchosGolpes)
+      assert((pi, v) === (piccoloInconsciente, vegeta))
     }
   }
 
