@@ -97,12 +97,20 @@ class ArmaSuite extends FunSuite {
     }
   }
 
-//  test("Arma de fuego no hace nada si no sos humano o namek inconsciente") {
-//    new ArmaTest {
-//      val (l, t) = launch.atacar(trunks, UsarItem(Chumbo))
-//      assert((l, t) === (launch, trunks))
-//    }
-//  }
+  test("Arma de fuego no hace nada si no sos humano o namek inconsciente") {
+    new ArmaTest {
+      val (l, t) = launch.atacar(trunks, UsarItem(Chumbo))
+      assert(t == trunks)
+      assert((l, t) === (launch eliminarItem BalaDeChumbo, trunks))
+    }
+  }
+
+  test("Arma de fuego gasta bala aunque no pegue") {
+    new ArmaTest {
+      val (l, _) = launch.atacar(trunks, UsarItem(Chumbo))
+      assert(launch.eliminarItem(BalaDeChumbo) === l)
+    }
+  }
 
   test("Arma de fuego gasta municion adecuada") {
     new ArmaTest {
