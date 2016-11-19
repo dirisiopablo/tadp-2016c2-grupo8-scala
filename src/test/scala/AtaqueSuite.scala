@@ -46,6 +46,11 @@ class AtaqueSuite extends FunSuite {
     val caracteristicasBuu = Caracteristicas("Buu", listaItemsBuu, listaMovimientosBuu, 3500, 3500)
     val formaDigerirBuu = {(g: Guerrero, g2: Guerrero) => g}
     val buu = Monstruo(caracteristicasBuu, formaDigerirBuu, inconsciente = false)
+
+    val listaItemsGokuGenki = List()
+    val listaMovimientosGokuGenki = List(Genkidama, DejarseFajar)
+    val caracteristicasGokuGenki = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 999999, 89999)
+    val gokuGenki = Saiyajin(caracteristicasGokuGenki, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
   }
 
   test("Muchos golpes con mas energia") {
@@ -126,7 +131,7 @@ class AtaqueSuite extends FunSuite {
 
   test("Genkidama pega 10^rounds que se dejo fajar") {
     new AtaqueTest {
-      assert(1 === 2)
+      val planDeAtaque = Some(List[Movimiento](DejarseFajar, DejarseFajar, DejarseFajar, Genkidama))
     }
   }
 

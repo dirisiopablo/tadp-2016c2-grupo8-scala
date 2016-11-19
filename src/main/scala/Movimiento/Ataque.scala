@@ -5,7 +5,7 @@ import Guerrero._
 trait Ataque extends Movimiento {
   def doApply(ejecutante: Guerrero, atacado: Guerrero): (Guerrero, Guerrero)
   def apply(ejecutante: Guerrero, atacado: Guerrero) = {
-    if (ejecutante.energia == 0) (ejecutante, atacado)
+    if (ejecutante.energia <= 0) (ejecutante, atacado) //FIXME: contemplar energia negativa????
     else ejecutante match {
       case a:Inconscientable if a.inconsciente => (ejecutante, atacado)
       case _ => doApply(ejecutante, atacado)
@@ -80,4 +80,11 @@ case object Kamehameha extends AtaqueEnergia {
 
 case object FinalFlash extends AtaqueEnergia {
   override def kiRequerido: Integer = 90
+}
+
+case class Genkidama(energiaAcumulada: Int = 0) extends AtaqueEnergia {
+  override def kiRequerido: Integer = 0
+  override def doApply(ejecutante: Guerrero, atacado: Guerrero) {
+    (ejecutante, atacado copiarConEnergia(atacado.energia - 10^energiaAcumulada))
+  }
 }

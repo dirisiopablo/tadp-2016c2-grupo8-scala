@@ -1,7 +1,7 @@
 package Guerrero
 
 import Item._
-import Movimiento.Movimiento
+import Movimiento.{DejarseFajar, Genkidama, Movimiento}
 import ResultadoPelea.{ResultadoPelea, SiguenPeleando}
 import Criterio.{Criterio, MenorDesventaja}
 
@@ -26,7 +26,17 @@ trait Guerrero {
 
   def eliminarItem(i: Item): Guerrero = copiarConItems(itemList diff List(i))
 
-  def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = movimiento(this, guerrero)
+  def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = {
+    if (movimientos.exists { _.isInstanceOf[Genkidama] }) {
+      val genkidama = movimientos.find {_.isInstanceOf[Genkidama]}.get
+      val newGenki =
+        if (movimiento == DejarseFajar) Genkidama(genkidama.asInstanceOf[Genkidama].energiaAcumulada + 1)
+        else Genkidama(0)
+      movimiento(copiarConMovimientos(movimientos.filter {!_.isInstanceOf[Genkidama]} :+ newGenki), guerrero)
+    } else {
+      movimiento(this, guerrero)
+    }
+  }
 
   /**
     * Si el resultado del criterio es menor a 0 significa que el movimiento no es deseable en absoluto
