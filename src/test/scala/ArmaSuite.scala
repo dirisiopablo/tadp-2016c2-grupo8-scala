@@ -10,45 +10,45 @@ class ArmaSuite extends FunSuite {
 
   trait ArmaTest {
     val caracteristicasVegeta = Caracteristicas("Vegeta", List(), List(), 8000, 6400)
-    val vegeta = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
-    val vegetaMono = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = true, inconsciente = false)
+    val vegeta = Guerrero(caracteristicasVegeta, Saiyajin(cola = true, nivelSaiyajin = 0, estadoMono = false, inconsciente = false))
+    val vegetaMono = Guerrero(caracteristicasVegeta, Saiyajin(cola = true, nivelSaiyajin = 0, estadoMono = true, inconsciente = false))
 
     val listaItemsTrunks = List(BraveSword)
     val listaMovimientosTrunks = List(UsarItem(BraveSword))
     val caracteristicasTrunks = Caracteristicas("Trunks", listaItemsTrunks, listaMovimientosTrunks, 5000, 1500)
-    val trunks = Saiyajin(caracteristicasTrunks, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
+    val trunks = Guerrero(caracteristicasTrunks, Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false))
 
     val caracteristicasYamcha = Caracteristicas("Yamcha", List(), List(), 700, 700)
-    val yamcha = Humano(caracteristicasYamcha, inconsciente = false)
+    val yamcha = Guerrero(caracteristicasYamcha, Humano( inconsciente = false))
 
     val listaItemsPiccolo = List(EsferaDeUnaEstrella, EsferaDeDosEstrellas, EsferaDeTresEstrellas,
       EsferaDeCuatroEstrellas, EsferaDeCincoEstrellas, EsferaDeSeisEstrellas, EsferaDeSieteEstrellas)
     val esMagique = {(g1:Guerrero, g2:Guerrero) => (g1, g2.copiarConEnergia(2))}
     val listaMovimientosPiccolo = List(Magia(esMagique))
     val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
-    val piccolo = Namekusein(caracteristicasPiccolo, inconsciente = false)
+    val piccolo = Guerrero(caracteristicasPiccolo, Namekusein(inconsciente = false))
 
-    val piccoloInconsciente = Namekusein(caracteristicasPiccolo, inconsciente = true)
+    val piccoloInconsciente = Guerrero(caracteristicasPiccolo, Namekusein(inconsciente = true))
 
     val listaItemsLaunch = List(Chumbo, BalaDeChumbo, BalaDeChumbo, BalaDeChumbo, MisilAntiaereo)
     val listaMovimientosLaunch = List(UsarItem(Chumbo))
     val caracteristicasLaunch = Caracteristicas("Launch", listaItemsLaunch, listaMovimientosLaunch, 50, 50)
-    val launch = Humano(caracteristicasLaunch, inconsciente = false)
+    val launch = Guerrero(caracteristicasLaunch, Humano(inconsciente = false))
 
     val listaItemsLaunchRubia = List(Chumbo, BalaDeBasoca, BalaDeBasoca, MisilAntiaereo)
     val listaMovimientosLaunchRubia = List(UsarItem(Chumbo))
     val caracteristicasLaunchRubia = Caracteristicas("LaunchRubia", listaItemsLaunchRubia, listaMovimientosLaunchRubia, 50, 50)
-    val launchRubia = Humano(caracteristicasLaunchRubia, inconsciente = false)
+    val launchRubia = Guerrero(caracteristicasLaunchRubia, Humano(inconsciente = false))
 
     val listaItemsBulma = List(Roma)
     val listaMovimientosBulma = List(UsarItem(Roma))
     val caracteristicasBulma = Caracteristicas("Bulma", listaItemsBulma, listaMovimientosBulma, 50, 50)
-    val bulma = Humano(caracteristicasBulma, inconsciente = false)
+    val bulma = Guerrero(caracteristicasBulma, Humano(inconsciente = false))
 
     val listaItemsChichi = List(Roma)
     val listaMovimientosChichi = List(UsarItem(Roma))
     val caracteristicasChichi = Caracteristicas("Bulma", listaItemsBulma, listaMovimientosBulma, 50, 50)
-    val chichi = Humano(caracteristicasChichi, inconsciente = false)
+    val chichi = Guerrero(caracteristicasChichi, Humano(inconsciente = false))
   }
 
   test("El arma no se consume") {
@@ -61,8 +61,8 @@ class ArmaSuite extends FunSuite {
   test("Arma filosa corta cola de saiyajin") {
     new ArmaTest {
       val (_, v) = trunks.atacar(vegeta, UsarItem(BraveSword))
-      v match {
-        case Saiyajin(_, false, _, _, _) => succeed
+      v.tipo match {
+        case Saiyajin(false, _, _, _) => succeed
         case _ => fail
       }
     }

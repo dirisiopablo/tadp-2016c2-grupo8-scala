@@ -9,7 +9,7 @@ trait Arma extends ItemUsable {
 
 trait ArmaRoma extends Arma {
   def apply(ejecutante: Guerrero, objetivo: Guerrero): (Guerrero, Guerrero) = objetivo match {
-    case objetivo: Inconscientable if objetivo.energia < 300 => (ejecutante, objetivo.copiarInconsciente)
+    case objetivo: Inconscientable if objetivo.energia < 300 => (ejecutante, objetivo.copy(tipo = objetivo.copiarInconsciente))
     case _ => (ejecutante, objetivo) // ¯\_(ツ)_/¯
   }
 }

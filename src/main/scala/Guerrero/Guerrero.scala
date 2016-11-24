@@ -6,7 +6,7 @@ import Movimiento.Movimiento
 import ResultadoPelea.{ResultadoPelea, SiguenPeleando}
 import Criterio.{Criterio, MenorDesventaja}
 
-case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo ) {
+case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo) {
   type PlanDeAtaque = Option[Seq[Movimiento]]
 
   def movimientos = caracteristicas.movimientos
@@ -116,11 +116,11 @@ case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo ) {
   }
 }
 
-case class Tipo()
+sealed trait Tipo
 trait Fusionable
 trait Inconscientable {
   val inconsciente: Boolean
-  def copiarInconsciente: Guerrero
+  def copiarInconsciente: Tipo
 }
 
 case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: List[Movimiento], energiaMax: Int, energia: Int)

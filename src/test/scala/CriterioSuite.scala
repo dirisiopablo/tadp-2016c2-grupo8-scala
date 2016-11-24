@@ -13,17 +13,17 @@ class CriterioSuite extends FunSuite {
     val listaItemsGoku = List()
     val listaMovimientosGoku = List(MuchosGolpes)
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 9000)
-    val goku = Saiyajin(caracteristicasGoku, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = true)
+    val goku = Guerrero(caracteristicasGoku, Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = true))
 
     val listaItemsVegeta = List(SemillaDelErmitanio)
     val listaMovimientosVegeta = List[Movimiento](UsarItem(SemillaDelErmitanio), MuchosGolpes)
     val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 150, 150)
-    val vegeta = Saiyajin(caracteristicasVegeta, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = true)
+    val vegeta = Guerrero(caracteristicasVegeta, Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = true))
 
     val listaItems18 = List()
     val listaMovimientos18 = List(Explotar)
     val caracteristicas18 = Caracteristicas("18", listaItems18, listaMovimientos18, 8, 2)
-    val a18 = Androide(caracteristicas18)
+    val a18 = Guerrero(caracteristicas18, Androide())
   }
 
   test("Mayor daño") {

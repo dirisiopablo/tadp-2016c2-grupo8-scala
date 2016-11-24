@@ -12,30 +12,30 @@ class MovimientoSuite extends FunSuite {
     val listaItemsVegeta = List(SemillaDelErmitanio, FotoDeLaLuna)
     val listaMovimientosVegeta = List(Cargar, ConvertirseEnMono, UsarItem(SemillaDelErmitanio))
     val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 8000, 6400)
-    val vegeta = Saiyajin(caracteristicasVegeta, cola = true, nivelSaiyajin = 0, estadoMono = false, inconsciente = true)
+    val vegeta = Guerrero(caracteristicasVegeta ,Saiyajin(cola = true, nivelSaiyajin = 0, estadoMono = false, inconsciente = true))
 
     val listaItemsGoku = List(SemillaDelErmitanio)
     val listaMovimientosGoku = List(FusionarseCon(vegeta), ConvertirseEnSuperSaiyajin, UsarItem(SemillaDelErmitanio))
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 6000)
-    val goku = Saiyajin(caracteristicasGoku, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = true)
+    val goku = Guerrero(caracteristicasGoku ,Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = true))
 
     val listaItemsYamcha = List()
     val listaMovimientosYamcha = List(DejarseFajar)
     val caracteristicasYamcha = Caracteristicas("Yamcha", listaItemsYamcha, listaMovimientosYamcha, 1, 1)
-    val yamcha = Humano(caracteristicasYamcha, inconsciente = true)
+    val yamcha = Guerrero(caracteristicasYamcha, Humano(inconsciente = true))
 
     val listaItemsPiccolo = List(EsferaDeUnaEstrella, EsferaDeDosEstrellas, EsferaDeTresEstrellas,
       EsferaDeCuatroEstrellas, EsferaDeCincoEstrellas, EsferaDeSeisEstrellas, EsferaDeSieteEstrellas)
     val esMagique = {(g1:Guerrero, g2:Guerrero) => (g1, g2.copiarConEnergia(2))}
     val listaMovimientosPiccolo = List(Magia(esMagique))
     val caracteristicasPiccolo = Caracteristicas("Piccolo", listaItemsPiccolo, listaMovimientosPiccolo, 1700, 1700)
-    val piccolo = Namekusein(caracteristicasPiccolo, inconsciente = true)
+    val piccolo = Guerrero(caracteristicasPiccolo, Namekusein(inconsciente = true))
 
     val listaItemsBuu = List()
     val listaMovimientosBuu = List(ComerseAlOponente)
     val caracteristicasBuu = Caracteristicas("Buu", listaItemsBuu, listaMovimientosBuu, 3500, 3500)
     val formaDigerirBuu = {(g: Guerrero, g2: Guerrero) => g.copiarConMovimientos(listaMovimientosBuu ++ g2.movimientos)}
-    val buu = Monstruo(caracteristicasBuu, formaDigerirBuu, inconsciente = true)
+    val buu = Guerrero(caracteristicasBuu, Monstruo(formaDigerirBuu, inconsciente = true))
   }
 
   test("Usar Semilla del Ermitaño") {
@@ -48,8 +48,8 @@ class MovimientoSuite extends FunSuite {
   test("Convertirse en Mono") {
     new MovimientoTest {
       val(v, _) = vegeta.atacar(goku, ConvertirseEnMono)
-      v match {
-        case Saiyajin(_, true, 0, true, _) if v.energia === vegeta.energiaMax * 3 && v.energia === v.energiaMax => succeed
+      v.tipo match {
+        case Saiyajin(true, 0, true, _) if v.energia === vegeta.energiaMax * 3 && v.energia === v.energiaMax => succeed
         case _ => fail
       }
     }
@@ -58,8 +58,8 @@ class MovimientoSuite extends FunSuite {
   test("Convertirse en Super Saiyajin") {
     new MovimientoTest {
       val(g, v) = goku.atacar(vegeta, ConvertirseEnSuperSaiyajin)
-      g match {
-        case Saiyajin(_, false, 1, false, _) if g.energiaMax === goku.energiaMax * 5 && g.energia === goku.energia => succeed
+      g.tipo match {
+        case Saiyajin(false, 1, false, _) if g.energiaMax === goku.energiaMax * 5 && g.energia === goku.energia => succeed
         case _ => fail
       }
     }
@@ -71,8 +71,8 @@ class MovimientoSuite extends FunSuite {
       val(gssj1curado, _) = gssj1.atacar(vegeta, UsarItem(SemillaDelErmitanio))
       val(gssj2, _) = gssj1curado.atacar(vegeta, ConvertirseEnSuperSaiyajin)
 
-      gssj2 match {
-        case Saiyajin(_, false, 2, false, _)
+      gssj2.tipo match {
+        case Saiyajin(false, 2, false, _)
           if gssj2.energiaMax === goku.energiaMax * 25 && gssj2.energia === gssj1curado.energia => succeed
         case _ => fail
       }

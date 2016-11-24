@@ -14,12 +14,12 @@ class GuerreroSuite extends FunSuite {
     val listaItemsGoku = List()
     val listaMovimientosGoku = List(MuchosGolpes)
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 9000)
-    val goku = Saiyajin(caracteristicasGoku, cola = false, 0, estadoMono = false, inconsciente = true)
+    val goku = Guerrero(caracteristicasGoku, Saiyajin(cola = false, 0, estadoMono = false, inconsciente = false))
 
     val listaItemsVegeta = List(SemillaDelErmitanio)
     val listaMovimientosVegeta = List[Movimiento](Cargar, UsarItem(SemillaDelErmitanio), MuchosGolpes)
     val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 8000, 1000)
-    val vegeta = Saiyajin(caracteristicasVegeta, cola = false, 0, estadoMono = false, inconsciente = true)
+    val vegeta = Guerrero(caracteristicasVegeta, Saiyajin(cola = false, 0, estadoMono = false, inconsciente = false))
   }
 
   test("Pelear Round") {
