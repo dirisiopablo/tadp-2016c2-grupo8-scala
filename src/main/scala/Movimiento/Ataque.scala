@@ -20,9 +20,9 @@ trait AtaqueEnergia extends Ataque {
   def doApply(ejecutante: Guerrero, atacado: Guerrero) = {
     if (ejecutante.energia <= kiRequerido) (ejecutante, atacado)
     else {
-      (ejecutante, atacado) match {
-          case (_, _:Androide) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, kiRequerido) )
-          case (_, _:Monstruo) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido / 2) )
+      (ejecutante.tipo, atacado.tipo) match {
+          case (_, Androide()) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, kiRequerido) )
+          case (_, Monstruo(_, _)) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido / 2) )
           case (_, _) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido * 2) )
         }
       }
@@ -38,9 +38,9 @@ trait AtaqueEnergia extends Ataque {
 }
 
 case object MuchosGolpes extends AtaqueFisico {
-  def doApply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante, atacado) match {
+  def doApply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante.tipo, atacado.tipo) match {
 
-      case (Humano(_, _), Androide(_)) =>
+      case (Humano(_), Androide()) =>
         (ejecutante copiarConEnergia(ejecutante.energia - 10), atacado)
 
       case _ if ejecutante.energia < atacado.energia =>
@@ -52,18 +52,18 @@ case object MuchosGolpes extends AtaqueFisico {
 }
 
 case object Explotar extends AtaqueFisico {
-  def doApply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante, atacado) match {
+  def doApply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante.tipo, atacado.tipo) match {
 
-    case (Androide(_), Namekusein(_, _)) if atacado.energia <= ejecutante.energia * 3 =>
+    case (Androide(), Namekusein(_)) if atacado.energia <= ejecutante.energia * 3 =>
       (ejecutante copiarConEnergia 0, atacado copiarConEnergia 1)
 
-    case (Monstruo(_, _, _), Namekusein(_, _)) if atacado.energia <= ejecutante.energia * 2 =>
+    case (Monstruo(_, _), Namekusein(_)) if atacado.energia <= ejecutante.energia * 2 =>
       (ejecutante copiarConEnergia 0, atacado copiarConEnergia 1)
 
-    case (Androide(_), _) =>
+    case (Androide(), _) =>
       (ejecutante copiarConEnergia 0, atacado copiarConEnergia (atacado.energia - ejecutante.energia * 3))
 
-    case (Monstruo(_, _, _), _) =>
+    case (Monstruo(_, _), _) =>
       (ejecutante copiarConEnergia 0, atacado copiarConEnergia (atacado.energia - ejecutante.energia * 2))
 
     case _ => (ejecutante, atacado) // ¯\_(ツ)_/¯

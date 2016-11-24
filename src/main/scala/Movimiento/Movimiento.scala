@@ -12,12 +12,12 @@ case object DejarseFajar extends Movimiento {
 }
 
 case object Cargar extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante.tipo match {
 
-      case Saiyajin(caracteristicas, _, nivelSaiyajin, _, _) if nivelSaiyajin > 0 =>
+      case Saiyajin(_, nivelSaiyajin, _, _) if nivelSaiyajin > 0 =>
         (ejecutante copiarConEnergia (ejecutante.energia + 150 * nivelSaiyajin min ejecutante.energiaMax), atacado)
 
-      case Androide(_) =>
+      case Androide() =>
         (ejecutante, atacado) // ¯\_(ツ)_/¯
 
       case _ =>
@@ -37,9 +37,9 @@ case class UsarItem(item: ItemUsable) extends Movimiento {
 }
 
 case object ComerseAlOponente extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante.tipo match {
 
-      case Monstruo(_, formaDeDigerir, _) if ejecutante.energia > atacado.energia =>
+      case Monstruo(formaDeDigerir, _) if ejecutante.energia > atacado.energia =>
         (formaDeDigerir(ejecutante, atacado), atacado copiarConEnergia 0)
 
       case _ => (ejecutante, atacado) // que verguenza
@@ -47,20 +47,23 @@ case object ComerseAlOponente extends Movimiento {
 }
 
 case object ConvertirseEnMono extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante.tipo match {
 
-    case Saiyajin(caracteristicas, cola, nivelSaiyajin, estadoMono, _)
+    case saiyan@Saiyajin(cola, nivelSaiyajin, estadoMono, _)
       if cola && nivelSaiyajin == 0 && !estadoMono && ejecutante.tieneItem(FotoDeLaLuna) =>
 
-      val mono = Saiyajin(
-        caracteristicas = caracteristicas.copy(
-          energiaMax = ejecutante.energiaMax * 3,
-          energia = ejecutante.energiaMax * 3
-        ),
-        cola = cola,
-        nivelSaiyajin = 0,
-        estadoMono = true,
-        inconsciente = false
+      val mono = ejecutante.copy(
+        caracteristicas =
+          ejecutante.caracteristicas.copy(
+            energiaMax = ejecutante.energiaMax * 3,
+            energia = ejecutante.energiaMax * 3
+          ),
+        tipo =
+          saiyan.copy(
+            nivelSaiyajin = 0,
+            estadoMono = true,
+            inconsciente = false
+          )
       )
 
       val monoSinLuna = mono eliminarItem FotoDeLaLuna
@@ -72,38 +75,37 @@ case object ConvertirseEnMono extends Movimiento {
 }
 
 case object ConvertirseEnSuperSaiyajin extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante match {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = ejecutante.tipo match {
 
-      case Saiyajin(caracteristicas, cola, nivelSaiyajin, estadoMono, inconsciente) if ejecutante.energia * 2 > ejecutante.energiaMax =>
-
-        val ssj = Saiyajin(
-          caracteristicas = caracteristicas.copy(energiaMax = ejecutante.energiaMax * 5),
-          cola = cola,
-          nivelSaiyajin = nivelSaiyajin + 1,
-          estadoMono = estadoMono,
-          inconsciente = inconsciente
+      case saiyan@Saiyajin(cola, nivelSaiyajin, estadoMono, inconsciente) if ejecutante.energia * 2 > ejecutante.energiaMax =>
+        val ssj = ejecutante.copy(
+          caracteristicas = ejecutante.caracteristicas.copy(energiaMax = ejecutante.energiaMax * 5),
+          tipo = saiyan.copy(
+            nivelSaiyajin = nivelSaiyajin + 1
+          )
         )
 
         (ssj, atacado)
-
       case _ =>
         (ejecutante, atacado) // ¯\_(ツ)_/¯
   }
 }
 
 case class FusionarseCon(elOtro: Guerrero) extends Movimiento {
-  def apply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante, elOtro) match {
+  def apply(ejecutante: Guerrero, atacado: Guerrero) = (ejecutante.tipo, elOtro.tipo) match {
 
       case (a:Fusionable, b: Fusionable)  =>
 
-        val fusionado = Fusionado(Caracteristicas(
-          nombre = a.nombre.substring(0, a.nombre.length / 2) ++ b.nombre.substring(b.nombre.length / 2),
-          inventario = List(),
-          movimientos = a.movimientos ++ b.movimientos,
-          energiaMax = a.energiaMax + b.energiaMax,
-          energia = a.energia + b.energia
-        ), inconsciente = false)
-
+        val fusionado = ejecutante.copy(
+          caracteristicas = Caracteristicas(
+            nombre = ejecutante.nombre.substring(0, ejecutante.nombre.length / 2) ++ atacado.nombre.substring(atacado.nombre.length / 2),
+            movimientos = ejecutante.movimientos ++ atacado.movimientos,
+            inventario = List(),
+            energiaMax = ejecutante.energiaMax + atacado.energiaMax,
+            energia = ejecutante.energia + atacado.energia
+          ),
+          tipo = Fusionado(inconsciente = false)
+        )
         (fusionado, atacado)
 
       case _ => (ejecutante, atacado) // ¯\_(ツ)_/¯

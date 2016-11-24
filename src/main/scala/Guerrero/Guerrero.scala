@@ -6,11 +6,9 @@ import Movimiento.Movimiento
 import ResultadoPelea.{ResultadoPelea, SiguenPeleando}
 import Criterio.{Criterio, MenorDesventaja}
 
-trait Guerrero {
-
+case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo ) {
   type PlanDeAtaque = Option[Seq[Movimiento]]
 
-  val caracteristicas: Caracteristicas
   def movimientos = caracteristicas.movimientos
 
   def nombre = caracteristicas.nombre
@@ -21,11 +19,11 @@ trait Guerrero {
   def itemList = caracteristicas.inventario
   def tieneItem(item: Item) = itemList contains item
 
-  def copiarConEnergia(energia: Int): Guerrero
-  def copiarConItems(items: List[Item]): Guerrero
-  def copiarConMovimientos(movimientos: List[Movimiento]): Guerrero
+  def copiarConEnergia(energia: Int): Guerrero = copy(caracteristicas copy (energia = energia))
+  def copiarConItems(items: List[Item]): Guerrero = copy(caracteristicas copy (inventario = items))
+  def copiarConMovimientos(movimientos: List[Movimiento]): Guerrero = copy(caracteristicas copy (movimientos = movimientos))
 
-  def eliminarItem(i: Item): Guerrero = copiarConItems(itemList diff List(i))
+  def eliminarItem(i: Item): Guerrero = copy(caracteristicas copy (inventario = itemList diff List(i)))
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = {
 //    if (movimientos.exists { _.isInstanceOf[Genkidama] }) {
@@ -118,6 +116,7 @@ trait Guerrero {
   }
 }
 
+case class Tipo()
 trait Fusionable
 trait Inconscientable {
   val inconsciente: Boolean
@@ -126,44 +125,26 @@ trait Inconscientable {
 
 case class Caracteristicas(nombre: String, inventario: List[Item], movimientos: List[Movimiento], energiaMax: Int, energia: Int)
 
-case class Humano(caracteristicas: Caracteristicas, inconsciente: Boolean) extends Guerrero with Fusionable with Inconscientable {
-  def copiarConEnergia(energia: Int): Humano = copy(caracteristicas copy (energia = energia))
-  def copiarConItems(items: List[Item]): Humano = copy(caracteristicas copy (inventario = items))
-  def copiarConMovimientos(movimientos: List[Movimiento]): Humano = copy(caracteristicas copy (movimientos = movimientos))
+case class Humano(inconsciente: Boolean) extends Tipo with Fusionable with Inconscientable {
   def copiarInconsciente: Humano = copy(inconsciente = true)
 }
 
-case class Saiyajin(caracteristicas: Caracteristicas, cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false, inconsciente: Boolean)
-  extends Guerrero with Fusionable with Inconscientable {
-  def copiarConEnergia(energia: Int): Saiyajin = copy(caracteristicas copy (energia = energia))
-  def copiarConItems(items: List[Item]): Saiyajin = copy(caracteristicas copy (inventario = items))
-  def copiarConMovimientos(movimientos: List[Movimiento]): Saiyajin = copy(caracteristicas copy (movimientos = movimientos))
+case class Saiyajin(cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Boolean = false, inconsciente: Boolean)
+  extends Tipo with Fusionable with Inconscientable {
   def copiarInconsciente: Saiyajin = copy(inconsciente = true)
 }
 
-case class Androide(caracteristicas: Caracteristicas) extends Guerrero {
-  def copiarConEnergia(energia: Int): Androide = copy(caracteristicas copy (energia = energia))
-  def copiarConItems(items: List[Item]): Androide = copy(caracteristicas copy (inventario = items))
-  def copiarConMovimientos(movimientos: List[Movimiento]): Androide = copy(caracteristicas copy (movimientos = movimientos))
+case class Androide() extends Tipo {
 }
 
-case class Namekusein(caracteristicas: Caracteristicas, inconsciente: Boolean) extends Guerrero with Fusionable with Inconscientable {
-  def copiarConEnergia(energia: Int): Namekusein = copy(caracteristicas copy (energia = energia))
-  def copiarConItems(items: List[Item]): Namekusein = copy(caracteristicas copy (inventario = items))
-  def copiarConMovimientos(movimientos: List[Movimiento]): Namekusein = copy(caracteristicas copy (movimientos = movimientos))
+case class Namekusein(inconsciente: Boolean) extends Tipo with Fusionable with Inconscientable {
   def copiarInconsciente: Namekusein = copy(inconsciente = true)
 }
 
-case class Monstruo(caracteristicas: Caracteristicas, formaDeDigerir: ((Guerrero, Guerrero) => Guerrero), inconsciente: Boolean) extends Guerrero with Inconscientable {
-  def copiarConEnergia(energia: Int): Monstruo = copy(caracteristicas copy (energia = energia))
-  def copiarConItems(items: List[Item]): Monstruo = copy(caracteristicas copy (inventario = items))
-  def copiarConMovimientos(movimientos: List[Movimiento]): Monstruo = copy(caracteristicas copy (movimientos = movimientos))
+case class Monstruo(formaDeDigerir: ((Guerrero, Guerrero) => Guerrero), inconsciente: Boolean) extends Tipo with Inconscientable {
   def copiarInconsciente: Monstruo = copy(inconsciente = true)
 }
 
-case class Fusionado(caracteristicas: Caracteristicas, inconsciente: Boolean) extends Guerrero with Inconscientable {
-  def copiarConEnergia(energia: Int): Fusionado = copy(caracteristicas copy (energia = energia))
-  def copiarConItems(items: List[Item]): Fusionado = copy(caracteristicas copy (inventario = items))
-  def copiarConMovimientos(movimientos: List[Movimiento]): Fusionado = copy(caracteristicas copy (movimientos = movimientos))
+case class Fusionado(inconsciente: Boolean) extends Tipo with Inconscientable {
   def copiarInconsciente: Fusionado = copy(inconsciente = true)
 }
