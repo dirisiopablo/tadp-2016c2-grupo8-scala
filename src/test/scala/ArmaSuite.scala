@@ -78,8 +78,7 @@ class ArmaSuite extends FunSuite {
   test("Arma filosa deja saiyajin mono inconsciente") {
     new ArmaTest {
       val (_, v) = trunks.atacar(vegetaMono, UsarItem(BraveSword))
-      val vi = v.asInstanceOf[Inconscientable]
-      assert(vi.inconsciente)
+      assert(v.tipo.asInstanceOf[Inconscientable].inconsciente)
     }
   }
 
@@ -144,8 +143,7 @@ class ArmaSuite extends FunSuite {
   test("Arma roma deja inconsciente a no-androide con menos de 300 energia") {
     new ArmaTest {
       val(b, c) = bulma.atacar(chichi, UsarItem(Roma))
-      val ch = c.asInstanceOf[Inconscientable]
-      assert(ch.inconsciente)
+      assert(c.tipo.asInstanceOf[Inconscientable].inconsciente)
     }
   }
 
