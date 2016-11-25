@@ -10,7 +10,7 @@ class AtaqueSuite extends FunSuite {
 
   trait AtaqueTest {
     val listaItemsGoku = List()
-    val listaMovimientosGoku = List(MuchosGolpes, Kamehameha, Genkidama)
+    val listaMovimientosGoku = List(MuchosGolpes, Kamehameha, Genkidama, DejarseFajar)
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 9000)
     val goku = Guerrero(caracteristicasGoku, Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false))
 
@@ -47,6 +47,11 @@ class AtaqueSuite extends FunSuite {
     val caracteristicasBuu = Caracteristicas("Buu", listaItemsBuu, listaMovimientosBuu, 3500, 3500)
     val formaDigerirBuu = {(g: Guerrero, g2: Guerrero) => g}
     val buu = Guerrero(caracteristicasBuu, Monstruo(formaDigerirBuu, inconsciente = false))
+
+    val listaItemsGokuGenki = List()
+    val listaMovimientosGokuGenki = List(DejarseFajar, Genkidama)
+    val caracteristicasGokuGenki = Caracteristicas("Goku", listaItemsGokuGenki, listaMovimientosGokuGenki, 9999, 9000)
+    val gokuGenki = Guerrero(caracteristicasGokuGenki, Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false))
 
     val listaItemsFreezer = List()
     val listaMovimientosFreezer = List(MuchosGolpes)
@@ -134,7 +139,7 @@ class AtaqueSuite extends FunSuite {
   test("Genkidama pega 10^rounds que se dejo fajar") {
     new AtaqueTest {
       val planDeAtaque = Some(List[Movimiento](DejarseFajar, DejarseFajar, DejarseFajar, Genkidama)) // 1000 dmg
-      val optres = goku.pelearContra(freezer)(planDeAtaque)
+      val optres = gokuGenki.pelearContra(freezer)(planDeAtaque)
       val res = optres.get
       assert(res.isInstanceOf[SiguenPeleando] && res.asInstanceOf[SiguenPeleando].guerreros._2.energia == freezer.energia - 1000)
     }

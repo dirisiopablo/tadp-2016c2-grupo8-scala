@@ -20,6 +20,11 @@ class GuerreroSuite extends FunSuite {
     val listaMovimientosVegeta = List[Movimiento](Cargar, UsarItem(SemillaDelErmitanio), MuchosGolpes)
     val caracteristicasVegeta = Caracteristicas("Vegeta", listaItemsVegeta, listaMovimientosVegeta, 8000, 1000)
     val vegeta = Guerrero(caracteristicasVegeta, Saiyajin(cola = false, 0, estadoMono = false, inconsciente = false))
+
+    val listaItemsKrilin = List()
+    val listaMovimientosKrilin = List(Kamehameha)
+    val caracteristicasKrilin = Caracteristicas("Krilin", listaItemsKrilin, listaMovimientosKrilin, 5000, 5000)
+    val krilin = Guerrero(caracteristicasKrilin, Humano(inconsciente = false))
   }
 
   test("Pelear Round") {
@@ -32,19 +37,27 @@ class GuerreroSuite extends FunSuite {
 
   test("Pelear Contra") {
     new GuerreroTest {
-      val res = goku.pelearContra(vegeta)(goku.planDeAtaqueContra(vegeta, 6)(MayorDanio))
+      val planDeAtaque = Some(List(MuchosGolpes, MuchosGolpes, MuchosGolpes))
+      val res: Option[ResultadoPelea.ResultadoPelea] = goku.pelearContra(krilin)(planDeAtaque)
       /*
-       * round 1: goku -> muchosgolpes, vegeta -> semilla   -   goku 9000, vegeta 8000
-       * round 2: goku -> muchosgolpes, vegeta -> cargar   -    goku 9000, vegeta 8000
-       * round 3: goku -> muchosgolpes, vegeta -> cargar   -    goku 9000, vegeta 8000
-       * round 4: goku -> muchosgolpes, vegeta -> cargar   -    goku 9000, vegeta 8000
-       * round 5: goku -> muchosgolpes, vegeta -> cargar   -    goku 9000, vegeta 8000
-       * round 6: goku -> muchosgolpes, vegeta -> cargar   -    goku 9000, vegeta 8000
+       * goku pega 20, krilin pega 200 y se pega 100
+       *
+       * start: goku: 9000 - krilin: 5000
+       *
+       * round 1: goku   -> muchosgolpes  -  goku 9000, krilin 4980
+       *          krilin -> kamehameha    -  goku 8800, krilin 4880
+       *
+       * round 1: goku   -> muchosgolpes  -  goku 8800, krilin 4860
+       *          krilin -> kamehameha    -  goku 8600, krilin 4760
+       *
+       * round 1: goku   -> muchosgolpes  -  goku 8600, krilin 4740
+       *          krilin -> kamehameha    -  goku 8400, krilin 4640
+       *
+       * end: goku: 8400 - krilin: 4640
        */
-      val lastGoku = goku
-      val lastVegeta = vegeta copiarConItems List() copiarConEnergia 8000
 
-      assert(res === Some(SiguenPeleando(goku, lastVegeta)))
+      val(g1, k1) = res.get.asInstanceOf[SiguenPeleando].guerreros
+      assert(g1 === goku.copiarConEnergia(8400) && k1 === krilin.copiarConEnergia(4640))
     }
   }
 

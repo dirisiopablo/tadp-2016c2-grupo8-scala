@@ -25,14 +25,16 @@ case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo, energiaAcumula
   def eliminarItem(i: Item): Guerrero = copy(caracteristicas copy (inventario = itemList diff List(i)))
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = {
-    if ((movimientos contains Genkidama) && movimiento == DejarseFajar) movimiento(copy(energiaAcumulada = energiaAcumulada + 1), guerrero)
-    else movimiento(copy(energiaAcumulada = 0), guerrero)
+    if ((movimientos contains Genkidama) && movimiento == DejarseFajar)
+      movimiento(copy(energiaAcumulada = this.energiaAcumulada + 1), guerrero)
+    else
+      movimiento(copy(energiaAcumulada = 0), guerrero)
   }
 
   /**
     * Si el resultado del criterio es menor a 0 significa que el movimiento no es deseable en absoluto
     * y no debe ser considerado una respuesta válida.
-  */
+    */
   def movimentoMasEfectivoContra(guerrero: Guerrero)(criterio: Criterio): Option[Movimiento] = {
     if ((movimientos map criterio.simular(this, guerrero)).forall( _ < 0 )) None // ¯\_(ツ)_/¯
     else Some(movimientos.maxBy(criterio.simular(this, guerrero)))
