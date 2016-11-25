@@ -84,5 +84,5 @@ case object FinalFlash extends AtaqueEnergia {
 
 case object Genkidama extends AtaqueEnergia {
   override def kiRequerido: Integer = 0
-  override def doApply(ej: Guerrero, at: Guerrero) = (ej, at.copiarConEnergia(at.energia - 10^ej.energiaAcumulada))
+  override def doApply(ej: Guerrero, at: Guerrero) = (ej, at.copiarConEnergia(at.energia - math.pow(10, ej.energiaAcumulada).toInt))
 }

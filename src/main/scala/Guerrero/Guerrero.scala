@@ -27,6 +27,10 @@ case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo, energiaAcumula
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = {
     if ((movimientos contains Genkidama) && movimiento == DejarseFajar)
       movimiento(copy(energiaAcumulada = this.energiaAcumulada + 1), guerrero)
+    else if(movimiento == Genkidama) {
+      val (g1, g2) = movimiento(this, guerrero)
+      (g1.copy(energiaAcumulada = 0), g2) // para borrar la energia DESPUES de tirar la genkidama
+    }
     else
       movimiento(copy(energiaAcumulada = 0), guerrero)
   }
@@ -106,7 +110,7 @@ case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo, energiaAcumula
     */
   def pelearContra(guerrero: Guerrero)(planDeAtaque: PlanDeAtaque): Option[ResultadoPelea] = {
     val seed: ResultadoPelea = SiguenPeleando(this, guerrero)
-    planDeAtaque.map { _.foldLeft(seed) { (s, m) => s.map(pelearRound(m)) } }
+    planDeAtaque.map { _.foldLeft(seed) { (s, m) => s map { g => g._1.pelearRound(m)(g._2) } } }
   }
 }
 
