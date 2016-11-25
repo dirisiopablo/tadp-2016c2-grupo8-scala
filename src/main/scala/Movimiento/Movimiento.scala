@@ -98,11 +98,11 @@ case class FusionarseCon(elOtro: Guerrero) extends Movimiento {
 
         val fusionado = ejecutante.copy(
           caracteristicas = Caracteristicas(
-            nombre = ejecutante.nombre.substring(0, ejecutante.nombre.length / 2) ++ atacado.nombre.substring(atacado.nombre.length / 2),
-            movimientos = ejecutante.movimientos ++ atacado.movimientos,
+            nombre = ejecutante.nombre.substring(0, ejecutante.nombre.length / 2) ++ elOtro.nombre.substring(elOtro.nombre.length / 2),
+            movimientos = ejecutante.movimientos ++ elOtro.movimientos,
             inventario = List(),
-            energiaMax = ejecutante.energiaMax + atacado.energiaMax,
-            energia = ejecutante.energia + atacado.energia
+            energiaMax = ejecutante.energiaMax + elOtro.energiaMax,
+            energia = ejecutante.energia + elOtro.energia
           ),
           tipo = Fusionado(inconsciente = false)
         )

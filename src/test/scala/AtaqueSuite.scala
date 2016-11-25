@@ -3,13 +3,14 @@ import org.junit.runner.RunWith
 import org.scalatest.junit.JUnitRunner
 import Guerrero._
 import Movimiento._
+import ResultadoPelea.SiguenPeleando
 
 @RunWith(classOf[JUnitRunner])
 class AtaqueSuite extends FunSuite {
 
   trait AtaqueTest {
     val listaItemsGoku = List()
-    val listaMovimientosGoku = List(MuchosGolpes, Kamehameha)
+    val listaMovimientosGoku = List(MuchosGolpes, Kamehameha, Genkidama)
     val caracteristicasGoku = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 9999, 9000)
     val goku = Guerrero(caracteristicasGoku, Saiyajin(cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false))
 
@@ -47,10 +48,11 @@ class AtaqueSuite extends FunSuite {
     val formaDigerirBuu = {(g: Guerrero, g2: Guerrero) => g}
     val buu = Guerrero(caracteristicasBuu, Monstruo(formaDigerirBuu, inconsciente = false))
 
-//    val listaItemsGokuGenki = List()
-//    val listaMovimientosGokuGenki = List(Genkidama, DejarseFajar)
-//    val caracteristicasGokuGenki = Caracteristicas("Goku", listaItemsGoku, listaMovimientosGoku, 999999, 89999)
-//    val gokuGenki = Saiyajin(caracteristicasGokuGenki, cola = false, nivelSaiyajin = 0, estadoMono = false, inconsciente = false)
+    val listaItemsFreezer = List()
+    val listaMovimientosFreezer = List(MuchosGolpes)
+    val caracteristicasFreezer = Caracteristicas("Freezer", listaItemsFreezer, listaMovimientosFreezer, 1000000, 1000000)
+    val formaDigerirFreezer = {(g: Guerrero, g2: Guerrero) => g}
+    val freezer = Guerrero(caracteristicasFreezer, Monstruo(formaDigerirFreezer, inconsciente = false))
   }
 
   test("Muchos golpes con mas energia") {
@@ -131,8 +133,10 @@ class AtaqueSuite extends FunSuite {
 
   test("Genkidama pega 10^rounds que se dejo fajar") {
     new AtaqueTest {
-//      val planDeAtaque = Some(List[Movimiento](DejarseFajar, DejarseFajar, DejarseFajar, Genkidama))
-      assert(1 === 2)
+      val planDeAtaque = Some(List[Movimiento](DejarseFajar, DejarseFajar, DejarseFajar, Genkidama)) // 1000 dmg
+      val optres = goku.pelearContra(freezer)(planDeAtaque)
+      val res = optres.get
+      assert(res.isInstanceOf[SiguenPeleando] && res.asInstanceOf[SiguenPeleando].guerreros._2.energia == freezer.energia - 1000)
     }
   }
 

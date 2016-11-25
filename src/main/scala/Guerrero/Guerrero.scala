@@ -1,12 +1,11 @@
 package Guerrero
 
 import Item._
-//import Movimiento.{DejarseFajar, Genkidama, Movimiento}
-import Movimiento.Movimiento
+import Movimiento.{DejarseFajar, Genkidama, Movimiento}
 import ResultadoPelea.{ResultadoPelea, SiguenPeleando}
 import Criterio.{Criterio, MenorDesventaja}
 
-case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo) {
+case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo, energiaAcumulada: Int = 0) {
   type PlanDeAtaque = Option[Seq[Movimiento]]
 
   def movimientos = caracteristicas.movimientos
@@ -26,15 +25,8 @@ case class Guerrero(caracteristicas: Caracteristicas, tipo: Tipo) {
   def eliminarItem(i: Item): Guerrero = copy(caracteristicas copy (inventario = itemList diff List(i)))
 
   def atacar(guerrero: Guerrero, movimiento: Movimiento): (Guerrero, Guerrero) = {
-//    if (movimientos.exists { _.isInstanceOf[Genkidama] }) {
-//      val genkidama = movimientos.find {_.isInstanceOf[Genkidama]}.get
-//      val newGenki =
-//        if (movimiento == DejarseFajar) Genkidama(genkidama.asInstanceOf[Genkidama].energiaAcumulada + 1)
-//        else Genkidama(0)
-//      movimiento(copiarConMovimientos(movimientos.filter {!_.isInstanceOf[Genkidama]} :+ newGenki), guerrero)
-//    } else {
-      movimiento(this, guerrero)
-//    }
+    if ((movimientos contains Genkidama) && movimiento == DejarseFajar) movimiento(copy(energiaAcumulada = energiaAcumulada + 1), guerrero)
+    else movimiento(copy(energiaAcumulada = 0), guerrero)
   }
 
   /**
@@ -134,8 +126,7 @@ case class Saiyajin(cola: Boolean = true, nivelSaiyajin: Int = 0, estadoMono: Bo
   def copiarInconsciente: Saiyajin = copy(inconsciente = true)
 }
 
-case class Androide() extends Tipo {
-}
+case class Androide() extends Tipo
 
 case class Namekusein(inconsciente: Boolean) extends Tipo with Fusionable with Inconscientable {
   def copiarInconsciente: Namekusein = copy(inconsciente = true)

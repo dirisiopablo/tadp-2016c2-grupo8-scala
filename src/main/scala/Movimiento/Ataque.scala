@@ -6,8 +6,8 @@ trait Ataque extends Movimiento {
   def doApply(ejecutante: Guerrero, atacado: Guerrero): (Guerrero, Guerrero)
   def apply(ejecutante: Guerrero, atacado: Guerrero) = {
     if (ejecutante.energia <= 0) (ejecutante, atacado) //FIXME: contemplar energia negativa????
-    else ejecutante match {
-      case a:Inconscientable if a.inconsciente => (ejecutante, atacado)
+    else ejecutante.tipo match {
+      case a: Inconscientable if a.inconsciente => (ejecutante, atacado)
       case _ => doApply(ejecutante, atacado)
     }
   }
@@ -22,8 +22,8 @@ trait AtaqueEnergia extends Ataque {
     else {
       (ejecutante.tipo, atacado.tipo) match {
           case (_, Androide()) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, kiRequerido) )
-          case (_, Monstruo(_, _)) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido / 2) )
-          case (_, _) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido * 2) )
+          case (_, Monstruo(_, _)) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido / 2))
+          case (_, _) => (nuevoEjecutante(ejecutante), nuevoAtacado(atacado, - kiRequerido * 2))
         }
       }
   }
@@ -82,9 +82,7 @@ case object FinalFlash extends AtaqueEnergia {
   override def kiRequerido: Integer = 90
 }
 
-//case class Genkidama(energiaAcumulada: Int = 0) extends AtaqueEnergia {
-//  override def kiRequerido: Integer = 0
-//  override def doApply(ejecutante: Guerrero, atacado: Guerrero) {
-//    (ejecutante, atacado copiarConEnergia(atacado.energia - 10^energiaAcumulada))
-//  }
-//}
+case object Genkidama extends AtaqueEnergia {
+  override def kiRequerido: Integer = 0
+  override def doApply(ej: Guerrero, at: Guerrero) = (ej, at.copiarConEnergia(at.energia - 10^ej.energiaAcumulada))
+}
